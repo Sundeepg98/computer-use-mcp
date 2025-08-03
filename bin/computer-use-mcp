@@ -1,0 +1,273 @@
+#!/usr/bin/env python3
+"""
+Computer Use MCP Server - Command Line Wrapper
+Provides computer control tools via MCP protocol with ultrathink enhancement
+"""
+
+import sys
+import os
+import argparse
+import json
+import logging
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+
+from mcp_server import ComputerUseServer
+from version import __version__
+
+def setup_logging(verbose=False):
+    """Configure logging based on verbosity"""
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    return logging.getLogger(__name__)
+
+def main():
+    """Main entry point for computer-use-mcp CLI"""
+    parser = argparse.ArgumentParser(
+        description='Computer Use MCP Server - Control your computer via MCP protocol',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Start MCP server in standard mode
+  computer-use-mcp
+  
+  # Start with verbose logging
+  computer-use-mcp --verbose
+  
+  # Start with custom config
+  computer-use-mcp --config /path/to/config.json
+  
+  # Test mode (dry run without actual actions)
+  computer-use-mcp --test
+  
+  # Show available tools
+  computer-use-mcp --list-tools
+  
+  # Run specific tool directly
+  computer-use-mcp --tool screenshot --analyze "Find the submit button"
+  
+For Claude Code integration, add to .mcp.json:
+  {
+    "mcpServers": {
+      "computer-use": {
+        "type": "stdio",
+        "command": "computer-use-mcp"
+      }
+    }
+  }
+"""
+    )
+    
+    parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Enable verbose logging'
+    )
+    
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'computer-use-mcp {__version__}'
+    )
+    
+    parser.add_argument(
+        '-c', '--config',
+        type=str,
+        help='Path to configuration file'
+    )
+    
+    parser.add_argument(
+        '--test',
+        action='store_true',
+        help='Run in test mode (no actual actions performed)'
+    )
+    
+    parser.add_argument(
+        '--list-tools',
+        action='store_true',
+        help='List all available tools and exit'
+    )
+    
+    parser.add_argument(
+        '--tool',
+        type=str,
+        choices=['screenshot', 'click', 'type', 'key', 'scroll', 'drag', 'wait', 'automate'],
+        help='Run a specific tool directly'
+    )
+    
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=None,
+        help='Port for TCP mode (default: stdio)'
+    )
+    
+    parser.add_argument(
+        '--host',
+        type=str,
+        default='localhost',
+        help='Host for TCP mode (default: localhost)'
+    )
+    
+    # Tool-specific arguments
+    parser.add_argument('--analyze', type=str, help='Analysis prompt for screenshot')
+    parser.add_argument('--x', type=int, help='X coordinate for click/drag')
+    parser.add_argument('--y', type=int, help='Y coordinate for click/drag')
+    parser.add_argument('--text', type=str, help='Text to type')
+    parser.add_argument('--key-press', type=str, help='Key to press')
+    parser.add_argument('--direction', type=str, choices=['up', 'down'], help='Scroll direction')
+    parser.add_argument('--amount', type=int, help='Scroll amount')
+    parser.add_argument('--task', type=str, help='Task for automate tool')
+    
+    args = parser.parse_args()
+    
+    # Setup logging
+    logger = setup_logging(args.verbose)
+    
+    # Handle list-tools request
+    if args.list_tools:
+        tools = [
+            {
+                "name": "screenshot",
+                "description": "Capture and analyze screenshot with ultrathink",
+                "parameters": ["analyze (optional)"]
+            },
+            {
+                "name": "click",
+                "description": "Click at coordinates or on element",
+                "parameters": ["x", "y", "button (left/right/middle)"]
+            },
+            {
+                "name": "type",
+                "description": "Type text with keyboard",
+                "parameters": ["text"]
+            },
+            {
+                "name": "key",
+                "description": "Press a key or key combination",
+                "parameters": ["key (e.g., Enter, Tab, Ctrl+C)"]
+            },
+            {
+                "name": "scroll",
+                "description": "Scroll in a direction",
+                "parameters": ["direction (up/down)", "amount"]
+            },
+            {
+                "name": "drag",
+                "description": "Click and drag from one point to another",
+                "parameters": ["start_x", "start_y", "end_x", "end_y"]
+            },
+            {
+                "name": "wait",
+                "description": "Wait for specified seconds",
+                "parameters": ["seconds"]
+            },
+            {
+                "name": "automate",
+                "description": "Automate a complex task with ultrathink planning",
+                "parameters": ["task"]
+            }
+        ]
+        
+        print("Available Computer Use Tools:")
+        print("=" * 50)
+        for tool in tools:
+            print(f"\n📦 {tool['name']}")
+            print(f"   {tool['description']}")
+            print(f"   Parameters: {', '.join(tool['parameters'])}")
+        return 0
+    
+    # Handle direct tool execution
+    if args.tool:
+        logger.info(f"Executing tool: {args.tool}")
+        
+        # Import computer use core
+        from computer_use_core import ComputerUseCore
+        
+        core = ComputerUseCore(test_mode=args.test)
+        
+        try:
+            if args.tool == 'screenshot':
+                result = core.screenshot(analyze=args.analyze)
+            elif args.tool == 'click':
+                if args.x is None or args.y is None:
+                    parser.error("click requires --x and --y coordinates")
+                result = core.click(args.x, args.y)
+            elif args.tool == 'type':
+                if not args.text:
+                    parser.error("type requires --text")
+                result = core.type_text(args.text)
+            elif args.tool == 'key':
+                if not args.key_press:
+                    parser.error("key requires --key-press")
+                result = core.key_press(args.key_press)
+            elif args.tool == 'scroll':
+                result = core.scroll(
+                    direction=args.direction or 'down',
+                    amount=args.amount or 3
+                )
+            elif args.tool == 'wait':
+                import time
+                seconds = args.amount or 1
+                time.sleep(seconds)
+                result = {"status": "success", "waited": seconds}
+            elif args.tool == 'automate':
+                if not args.task:
+                    parser.error("automate requires --task")
+                result = core.automate(args.task)
+            else:
+                result = {"error": f"Unknown tool: {args.tool}"}
+            
+            print(json.dumps(result, indent=2))
+            return 0
+            
+        except Exception as e:
+            logger.error(f"Tool execution failed: {e}")
+            return 1
+    
+    # Load configuration if provided
+    config = {}
+    if args.config:
+        config_path = Path(args.config)
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+            logger.info(f"Loaded configuration from {config_path}")
+        else:
+            logger.warning(f"Configuration file not found: {config_path}")
+    
+    # Apply test mode if specified
+    if args.test:
+        config['test_mode'] = True
+        logger.info("Running in TEST MODE - no actual actions will be performed")
+    
+    # Create and run server
+    try:
+        server = ComputerUseServer(**config)
+        
+        if args.port:
+            # TCP mode
+            logger.info(f"Starting MCP server on {args.host}:{args.port}")
+            # Note: TCP mode would require additional implementation
+            logger.error("TCP mode not yet implemented - using stdio")
+            server.run()
+        else:
+            # Standard stdio mode
+            logger.info("Starting MCP server in stdio mode")
+            server.run()
+            
+    except KeyboardInterrupt:
+        logger.info("Server stopped by user")
+        return 0
+    except Exception as e:
+        logger.error(f"Server error: {e}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,56 @@
+{
+  "name": "computer-use-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing computer use tools for Claude and other MCP clients",
+  "main": "dist/index.js",
+  "bin": {
+    "computer-use-mcp": "./bin/computer-use-mcp.js"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "python3 src/mcp_server.py",
+    "build": "tsc",
+    "test": "python3 -m pytest tests/",
+    "docker:build": "docker build -t computer-use-mcp .",
+    "docker:run": "docker run -it --rm computer-use-mcp",
+    "lint": "pylint src/",
+    "format": "black src/ tests/"
+  },
+  "keywords": [
+    "mcp",
+    "computer-use",
+    "automation",
+    "visual-analysis",
+    "screenshot",
+    "click",
+    "type",
+    "claude"
+  ],
+  "author": "Computer Use MCP Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sundeepg98/computer-use-mcp.git"
+  },
+  "mcp": {
+    "version": "2024-11-05",
+    "tools": [
+      "screenshot",
+      "click",
+      "type",
+      "key",
+      "scroll",
+      "drag",
+      "wait",
+      "automate"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8.0"
+  }
+}
