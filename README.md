@@ -30,32 +30,43 @@ A powerful MCP (Model Context Protocol) server that provides computer use tools 
 
 ## Installation
 
-### From Source (Current Method)
+### Direct GitHub Installation (Recommended)
 
-This is a custom MCP server that needs to be installed from source:
+Install directly from GitHub as a Python package:
+
+```bash
+# Install from GitHub
+pip install git+https://github.com/Sundeepg98/computer-use-mcp.git
+
+# Add to Claude Code using console command
+claude mcp add -s user computer-use -- computer-use-mcp
+
+# Or add using python module
+claude mcp add -s user computer-use -- python3 -m mcp.mcp_server
+```
+
+### Alternative: From Source
+
+If you prefer to work with source code:
 
 ```bash
 # Clone the repository
 git clone https://github.com/Sundeepg98/computer-use-mcp.git
 cd computer-use-mcp
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Test the server (optional)
-python3 start_mcp_server.py
+# Install in development mode
+pip install -e .
 
 # Add to Claude Code
-claude mcp add -s user computer-use -- python3 $(pwd)/start_mcp_server.py
+claude mcp add -s user computer-use -- computer-use-mcp
 ```
 
 ### Package Manager Installation (Future)
 
-We plan to publish this as an npm and pip package in the future:
+We plan to publish this on PyPI in the future:
 
 ```bash
 # Coming soon:
-# npm install -g computer-use-mcp
 # pip install computer-use-mcp
 ```
 
@@ -118,12 +129,11 @@ Or use the built-in MCP tools:
 #### Using claude mcp add (Recommended)
 
 ```bash
-# Clone the repository first
-git clone https://github.com/Sundeepg98/computer-use-mcp.git
-cd computer-use-mcp
+# Install directly from GitHub
+pip install git+https://github.com/Sundeepg98/computer-use-mcp.git
 
-# Add to Claude Code using official command
-claude mcp add -s user computer-use -- python3 $(pwd)/start_mcp_server.py
+# Add to Claude Code using console command
+claude mcp add -s user computer-use -- computer-use-mcp
 ```
 
 #### Manual Configuration (Alternative)
@@ -135,15 +145,15 @@ If you prefer manual configuration, add to your Claude Code configuration:
   "mcpServers": {
     "computer-use": {
       "type": "stdio",
-      "command": "python3",
-      "args": ["/path/to/computer-use-mcp/start_mcp_server.py"],
+      "command": "computer-use-mcp",
+      "args": [],
       "env": {}
     }
   }
 }
 ```
 
-**Note**: Replace `/path/to/computer-use-mcp/` with the actual path where you cloned the repository.
+**Note**: This assumes you've installed the package using `pip install git+https://github.com/Sundeepg98/computer-use-mcp.git`.
 
 #### Verify Installation
 
@@ -154,7 +164,7 @@ After adding the MCP server, verify it's working:
 claude mcp list
 
 # You should see:
-# computer-use: python3 /path/to/start_mcp_server.py - ✓ Connected
+# computer-use: computer-use-mcp - ✓ Connected
 
 # Get detailed server info
 claude mcp get computer-use

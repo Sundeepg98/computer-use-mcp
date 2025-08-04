@@ -91,7 +91,7 @@ class ComputerUseRefactored:
             # Perform analysis if requested
             if analyze and self.ultrathink_enabled:
                 logger.info("Ultrathink: Performing deep visual analysis")
-                analysis = self.visual_analyzer.analyze(screenshot_data, analyze)
+                analysis = self.visual_analyzer.analyze_screen(screenshot_data, analyze)
                 result['analysis'] = analysis
             
             return result

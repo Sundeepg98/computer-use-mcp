@@ -84,18 +84,18 @@ Repository = "https://github.com/sundeepg98/computer-use-mcp.git"
 Changelog = "https://github.com/sundeepg98/computer-use-mcp/blob/main/CHANGELOG.md"
 
 [project.scripts]
-computer-use-mcp = "computer_use_mcp.mcp_server:main"
+computer-use-mcp = "mcp.mcp_server:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["computer_use_mcp*"]
+include = ["mcp*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-computer_use_mcp = ["*.json", "*.md", "py.typed"]
+mcp = ["*.json", "*.md", "py.typed"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"

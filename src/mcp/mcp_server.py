@@ -13,7 +13,6 @@ from typing import Dict, Any, List, Optional
 
 from .factory_refactored import create_computer_use
 from .safety_checks import SafetyChecker
-from .visual_analyzer import VisualAnalyzer
 
 # Simple stderr logging for debugging
 def log(message):
@@ -39,10 +38,8 @@ class ComputerUseServer:
             from .factory_refactored import create_computer_use
             self.computer = create_computer_use()
         self.safety_checker = SafetyChecker()
-        self.visual = VisualAnalyzer()
-        # Keep aliases for backward compatibility
+        # Keep alias for backward compatibility
         self.safety = self.safety_checker
-        self.ultrathink = self.visual
         self.tools = self._define_tools()
         
     def _define_tools(self) -> List[Dict[str, Any]]:
@@ -1014,13 +1011,21 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
                 from .screenshot import ScreenshotFactory
                 # Create screenshot handler with specific method
                 screenshot_handler = ScreenshotFactory.create(force=method)
-                screenshot_result = screenshot_handler.capture(save_path=save_path)
+                screenshot_data = screenshot_handler.capture()
+                # Wrap raw bytes in expected format
+                screenshot_result = {
+                    'success': True,
+                    'data': screenshot_data,
+                    'method': method,
+                    'status': 'success'
+                }
             except Exception as e:
                 # Fallback to default method if specific method fails
-                screenshot_result = self.computer.screenshot(analyze=query)
+                log(f"Specific method {method} failed: {e}")
+                screenshot_result = self.computer.take_screenshot(analyze=query)
         else:
             # Use recommended method (current behavior)
-            screenshot_result = self.computer.screenshot(analyze=query)
+            screenshot_result = self.computer.take_screenshot(analyze=query)
         
         # Extract the actual image data
         if isinstance(screenshot_result, dict):
@@ -1028,22 +1033,50 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
         else:
             screenshot_data = screenshot_result
         
-        # Analyze with visual analyzer
-        analysis = self.visual.analyze_visual_context(screenshot_data)
+        # Save to file if save_path is provided
+        saved_to = None
+        if save_path and isinstance(screenshot_data, bytes):
+            try:
+                import os
+                from pathlib import Path
+                
+                # Expand user path and make absolute
+                save_path = os.path.expanduser(save_path)
+                save_path = os.path.abspath(save_path)
+                
+                # Create directory if needed
+                Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+                
+                # Save the screenshot
+                with open(save_path, 'wb') as f:
+                    f.write(screenshot_data)
+                
+                saved_to = save_path
+                log(f"Screenshot saved to: {save_path}")
+            except Exception as e:
+                log(f"Failed to save screenshot to {save_path}: {e}")
         
-        # Convert screenshot to base64 for transport if it's bytes
-        if isinstance(screenshot_data, bytes):
-            screenshot_b64 = base64.b64encode(screenshot_data).decode('utf-8')
-        else:
-            # In test mode, data might be a string
-            screenshot_b64 = str(screenshot_data)
-        
-        return {
-            "screenshot": screenshot_b64,
-            "analysis": analysis,
-            "query": analyze_prompt,
-            "status": screenshot_result.get('status', 'success') if isinstance(screenshot_result, dict) else 'success'
+        # Don't include the actual screenshot data to avoid token limits
+        # The screenshot is saved to file if save_path is provided
+        result = {
+            "status": screenshot_result.get('status', 'success') if isinstance(screenshot_result, dict) else 'success',
+            "method_used": method if method != "recommended" else "auto-detected",
+            "message": "Screenshot captured successfully"
         }
+        
+        # Add saved_to field if file was saved
+        if saved_to:
+            result["saved_to"] = saved_to
+            result["message"] = f"Screenshot saved to {saved_to}"
+        else:
+            result["message"] = "Screenshot captured (use save_path parameter to save to file)"
+            
+        # Add query if one was provided
+        if analyze_prompt:
+            result["query"] = analyze_prompt
+            result["note"] = "Visual analysis requires direct API integration with Claude's vision capabilities"
+        
+        return result
     
     def handle_click(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle click tool"""
@@ -1152,20 +1185,13 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
         if not self.safety.check_text_safety(str(task)):
             raise Exception(f"BLOCKED: {self.safety.last_error}")
         
-        # Plan with ultrathink
-        plan = self.ultrathink.plan_actions(task)
-        
-        # Execute plan
-        results = []
-        for step in plan:
-            # Execute each step
-            # This would need more implementation
-            results.append({"step": step, "status": "simulated"})
-        
+        # Automation requires direct implementation
+        # This is a placeholder that would need actual automation logic
         return {
             "task": task,
-            "plan": plan,
-            "results": results
+            "status": "not_implemented",
+            "message": "Task automation requires custom implementation for each specific task",
+            "note": "Consider breaking down the task into individual screenshot, click, type, and key actions"
         }
     
     def handle_install_xserver(self, args: Dict[str, Any]) -> Dict[str, Any]:
