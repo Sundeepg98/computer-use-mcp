@@ -1,0 +1,67 @@
+{
+  "timestamp": "2025-08-04T08:51:41.524970",
+  "backup_location": "/home/sunkar/computer-use-mcp/backup_20250804_085140",
+  "changes": [
+    {
+      "file": "/home/sunkar/computer-use-mcp/src/computer_use_mcp/test_mocks.py",
+      "change": "Created test mock providers",
+      "timestamp": "2025-08-04T08:51:41.379557"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/src/computer_use_mcp/mcp_server.py",
+      "change": "Updated to use refactored core",
+      "timestamp": "2025-08-04T08:51:41.380499"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_computer_use_core.py",
+      "change": "Migrated from test_mode to mocks",
+      "timestamp": "2025-08-04T08:51:41.520903"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_e2e_functionality.py",
+      "change": "No changes needed",
+      "timestamp": "2025-08-04T08:51:41.521196"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_mcp_complete_structure.py",
+      "change": "No changes needed",
+      "timestamp": "2025-08-04T08:51:41.521377"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_mcp_integration.py",
+      "change": "No changes needed",
+      "timestamp": "2025-08-04T08:51:41.521503"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_mcp_protocol.py",
+      "change": "No changes needed",
+      "timestamp": "2025-08-04T08:51:41.521585"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_screenshot_system.py",
+      "change": "Migrated from test_mode to mocks",
+      "timestamp": "2025-08-04T08:51:41.521927"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_xserver_integration.py",
+      "change": "Migrated from test_mode to mocks",
+      "timestamp": "2025-08-04T08:51:41.522348"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_stress_reliability.py",
+      "change": "Migrated from test_mode to mocks",
+      "timestamp": "2025-08-04T08:51:41.523038"
+    },
+    {
+      "file": "/home/sunkar/computer-use-mcp/tests/test_safety_security.py",
+      "change": "Migrated from test_mode to mocks",
+      "timestamp": "2025-08-04T08:51:41.524859"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "files_changed": 11,
+    "total_changes": 11,
+    "errors": 0
+  }
+}

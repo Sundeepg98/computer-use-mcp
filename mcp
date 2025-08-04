@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Quick MCP launcher"""
+import sys
+sys.path.insert(0, 'src')
+
+from mcp import create
+
+if __name__ == "__main__":
+    computer = create()
+    print("MCP Computer Use ready!")
+    print("Try: computer.take_screenshot()")
+    
+    import IPython
+    IPython.embed()

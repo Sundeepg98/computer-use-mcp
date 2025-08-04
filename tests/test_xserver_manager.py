@@ -14,7 +14,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
-from computer_use_mcp.xserver_manager import XServerManager
+from mcp.xserver_manager import XServerManager
 
 
 class TestXServerManagerInit(unittest.TestCase):
@@ -375,7 +375,7 @@ class TestGetBestDisplay(unittest.TestCase):
         )
         
         # Create new manager with WSL mode
-        with patch('computer_use_mcp.xserver_manager.XServerManager._detect_wsl', return_value=True):
+        with patch('mcp.xserver_manager.XServerManager._detect_wsl', return_value=True):
             manager = XServerManager()
             manager.wsl_mode = True
             manager.host_ip = '192.168.1.100'

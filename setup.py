@@ -75,12 +75,12 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "computer-use-mcp=computer_use_mcp.mcp_server:main",
+            "computer-use-mcp=mcp.mcp_server:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "computer_use_mcp": ["*.json", "*.md"],
+        "mcp": ["*.json", "*.md"],
     },
     project_urls={
         "Bug Reports": "https://github.com/sundeepg98/computer-use-mcp/issues",

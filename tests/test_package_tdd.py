@@ -6,6 +6,7 @@ Following true Test-Driven Development methodology with ultrathink
 """
 
 import unittest
+from mcp import create_computer_use_for_testing
 import os
 import sys
 import json
@@ -15,6 +16,8 @@ import shutil
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 import importlib.util
+
+from mcp.test_mocks import create_test_computer_use
 
 class TestPackageStructure(unittest.TestCase):
     """Test package has correct structure - WRITE FIRST"""
@@ -255,8 +258,8 @@ class TestCLIFunctionality(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertRegex(result.stdout.strip(), r'\d+\.\d+\.\d+')
     
-    def test_cli_test_mode(self):
-        """Test CLI runs in test mode"""
+    def test_cli_with_test_flag(self):
+        """Test CLI runs with test flag"""
         result = subprocess.run(
             [sys.executable, str(self.cli_path), '--test', '--tool', 'screenshot'],
             capture_output=True,
@@ -489,14 +492,14 @@ class TestMCPProtocolCompliance(unittest.TestCase):
         """Test MCP server uses correct protocol version"""
         from mcp_server import ComputerUseServer
         
-        server = ComputerUseServer(test_mode=True)
+        server = ComputerUseServer(computer_use=create_computer_use_for_testing())
         self.assertEqual(server.protocol_version, "2024-11-05")
     
     def test_mcp_server_tools_registration(self):
         """Test all 8 tools are registered"""
         from mcp_server import ComputerUseServer
         
-        server = ComputerUseServer(test_mode=True)
+        server = ComputerUseServer(computer_use=create_computer_use_for_testing())
         
         response = server.handle_list_tools({
             "jsonrpc": "2.0",
@@ -519,7 +522,7 @@ class TestMCPProtocolCompliance(unittest.TestCase):
         """Test MCP server handles requests correctly"""
         from mcp_server import ComputerUseServer
         
-        server = ComputerUseServer(test_mode=True)
+        server = ComputerUseServer(computer_use=create_computer_use_for_testing())
         
         # Test initialize
         response = server.handle_initialize({

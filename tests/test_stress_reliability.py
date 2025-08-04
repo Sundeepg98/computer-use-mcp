@@ -19,8 +19,10 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 
-from computer_use_mcp.mcp_server import ComputerUseServer
-from computer_use_mcp.computer_use_core import ComputerUseCore
+from mcp.mcp_server import ComputerUseServer
+from mcp import create_computer_use_for_testing
+
+from mcp.test_mocks import create_test_computer_use, MockScreenshotProvider, MockInputProvider
 
 
 class TestConcurrentUsageStress(unittest.TestCase):
@@ -28,7 +30,7 @@ class TestConcurrentUsageStress(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_concurrent_screenshot_requests(self):
         """Test handling multiple concurrent screenshot requests"""
@@ -244,7 +246,7 @@ class TestMemoryAndResourceStress(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_memory_usage_stability(self):
         """Test memory usage remains stable under load"""
@@ -374,7 +376,7 @@ class TestErrorRecoveryStress(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_error_recovery_after_failures(self):
         """Test system recovery after encountering errors"""
@@ -497,7 +499,7 @@ class TestPerformanceBenchmarks(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_response_time_benchmarks(self):
         """Test response time benchmarks for different operations"""

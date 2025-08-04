@@ -9,17 +9,21 @@ import json
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 
+from mcp.test_mocks import create_test_computer_use
+from mcp import create_computer_use_for_testing
+
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 
-from computer_use_mcp.mcp_server import ComputerUseServer
+from mcp.mcp_server import ComputerUseServer
 
 class TestMCPProtocol(unittest.TestCase):
     """Test MCP protocol compliance"""
     
     def setUp(self):
         """Setup test fixtures"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.computer = create_computer_use_for_testing()
+        self.server = ComputerUseServer(computer_use=self.computer)
     
     def test_protocol_version(self):
         """Test correct protocol version"""
@@ -255,10 +259,11 @@ class TestMCPServerIntegration(unittest.TestCase):
         
         mock_stdin.readline.return_value = init_request
         
-        server = ComputerUseServer(test_mode=True)
+        self.computer = create_computer_use_for_testing()
+        self.server = ComputerUseServer(computer_use=self.computer)
         
         # Process one request
-        server.process_request()
+        self.server.process_request()
         
         # Check response was written
         mock_stdout.write.assert_called()

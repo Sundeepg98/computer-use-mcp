@@ -4,31 +4,36 @@ import sys
 import os
 from pathlib import Path
 import pytest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock, patch
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
+# Import platform-aware configurations
+from conftest_platform_aware import *
 
 
 @pytest.fixture
 def mock_server():
     """Mock MCP server for testing"""
-    from computer_use_mcp.mcp_server import ComputerUseServer
-    server = ComputerUseServer(test_mode=True)
+    from mcp.mcp_server import ComputerUseServer
+    from mcp import create_computer_use_for_testing
+    computer = create_computer_use_for_testing()
+    server = ComputerUseServer(computer_use=computer)
     return server
 
 
 @pytest.fixture
 def mock_safety_checker():
     """Mock safety checker for testing"""
-    from computer_use_mcp.safety_checks import SafetyChecker
+    from mcp.safety_checks import SafetyChecker
     return SafetyChecker()
 
 
 @pytest.fixture
 def mock_ultrathink():
     """Mock ultrathink analyzer for testing"""
-    from computer_use_mcp.visual_analyzer import VisualAnalyzer as VisualAnalyzerAdvanced
+    from mcp.visual_analyzer import VisualAnalyzer as VisualAnalyzerAdvanced
     analyzer = VisualAnalyzerAdvanced()
     analyzer.analyze_screen = Mock(return_value={'elements': []})
     analyzer.plan_task = Mock(return_value={'steps': ['step1', 'step2']})
@@ -67,7 +72,7 @@ def temp_test_dir(tmp_path):
 @pytest.fixture
 def mock_xserver_manager():
     """Mock X server manager for testing"""
-    from computer_use_mcp.xserver_manager import XServerManager
+    from mcp.xserver_manager import XServerManager
     manager = Mock(spec=XServerManager)
     
     # Setup default return values

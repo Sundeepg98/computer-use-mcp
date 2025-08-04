@@ -17,9 +17,11 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 
-from computer_use_mcp.mcp_server import ComputerUseServer
-from computer_use_mcp.computer_use_core import ComputerUseCore
-from computer_use_mcp.safety_checks import SafetyChecker
+from mcp.mcp_server import ComputerUseServer
+from mcp import create_computer_use_for_testing
+
+from mcp.test_mocks import create_test_computer_use, MockScreenshotProvider, MockInputProvider
+from mcp.safety_checks import SafetyChecker
 
 
 class TestInputValidationSecurity(unittest.TestCase):
@@ -27,8 +29,8 @@ class TestInputValidationSecurity(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
-        self.core = ComputerUseCore(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
+        self.core = create_test_computer_use()
     
     def test_malicious_text_input_detection(self):
         """Test detection of malicious text inputs"""
@@ -250,7 +252,7 @@ class TestPrivilegeEscalationPrevention(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_system_command_prevention(self):
         """Test prevention of system command execution"""
@@ -383,7 +385,7 @@ class TestResourceExhaustionPrevention(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_cpu_exhaustion_prevention(self):
         """Test prevention of CPU exhaustion attacks"""
@@ -533,7 +535,7 @@ class TestInformationLeakagePrevention(unittest.TestCase):
     
     def setUp(self):
         """Setup test environment"""
-        self.server = ComputerUseServer(test_mode=True)
+        self.server = ComputerUseServer(computer_use=create_computer_use_for_testing())
     
     def test_error_message_sanitization(self):
         """Test that error messages don't leak sensitive information"""

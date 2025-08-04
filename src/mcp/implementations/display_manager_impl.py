@@ -1,0 +1,82 @@
+"""
+Display manager implementation
+"""
+
+import os
+import logging
+from typing import Optional
+from ..abstractions import DisplayManager
+from ..platform_utils import is_windows, is_wsl2, get_platform_info
+
+logger = logging.getLogger(__name__)
+
+
+class DisplayManagerImpl:
+    """Default implementation of DisplayManager protocol"""
+    
+    def __init__(self):
+        self._platform_info = get_platform_info()
+    
+    def is_display_available(self) -> bool:
+        """Check if display is available"""
+        # Windows and WSL2 always have display via PowerShell
+        if is_windows() or is_wsl2():
+            return True
+        
+        # macOS always has display
+        if self._platform_info['platform'] == 'macos':
+            return True
+        
+        # Linux - check for X11 or Wayland
+        if self._platform_info['platform'] == 'linux':
+            # Check DISPLAY environment variable
+            if os.environ.get('DISPLAY'):
+                return True
+            
+            # Check Wayland
+            if os.environ.get('WAYLAND_DISPLAY'):
+                return True
+            
+            # Check if we can use X11
+            return self._platform_info.get('can_use_x11', False)
+        
+        return False
+    
+    def get_best_display(self) -> Optional[str]:
+        """Get the best available display"""
+        if is_windows():
+            return 'windows_native'
+        
+        if is_wsl2():
+            return 'wsl2_powershell'
+        
+        if self._platform_info['platform'] == 'macos':
+            return 'macos_native'
+        
+        if self._platform_info['platform'] == 'linux':
+            if os.environ.get('DISPLAY'):
+                return os.environ['DISPLAY']
+            if os.environ.get('WAYLAND_DISPLAY'):
+                return 'wayland'
+        
+        return None
+    
+    def setup_display(self) -> bool:
+        """Setup display if needed"""
+        # Most platforms don't need setup
+        if self.is_display_available():
+            return True
+        
+        # Linux might need X server setup
+        if self._platform_info['platform'] == 'linux':
+            try:
+                # Try to set DISPLAY if not set
+                if not os.environ.get('DISPLAY'):
+                    os.environ['DISPLAY'] = ':0'
+                    logger.info("Set DISPLAY=:0")
+                    return True
+            except Exception as e:
+                logger.error(f"Failed to setup display: {e}")
+                return False
+        
+        return False
