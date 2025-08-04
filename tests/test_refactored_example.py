@@ -106,9 +106,7 @@ class TestComputerUseRefactored(unittest.TestCase):
             input_provider=self.mock_input,
             platform_info=self.mock_platform,
             safety_validator=self.mock_safety,
-            display_manager=self.mock_display,
-            visual_analyzer=Mock(),
-            enable_ultrathink=False  # Disable for faster tests
+            display_manager=self.mock_display
         )
     
     def test_screenshot_success(self):

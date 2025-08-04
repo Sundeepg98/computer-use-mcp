@@ -118,7 +118,7 @@ def create_computer_use_for_testing(**overrides) -> ComputerUseRefactored:
     # Import mocks
     from .test_mocks import (
         MockScreenshotProvider, MockInputProvider, MockPlatformInfo,
-        MockSafetyValidator, MockDisplayManager, MockVisualAnalyzer
+        MockSafetyValidator, MockDisplayManager
     )
     
     # Set defaults to mocks
@@ -127,8 +127,7 @@ def create_computer_use_for_testing(**overrides) -> ComputerUseRefactored:
         'input_provider': MockInputProvider(),
         'platform_info': MockPlatformInfo(),
         'safety_validator': MockSafetyValidator(),
-        'display_manager': MockDisplayManager(),
-        'visual_analyzer': MockVisualAnalyzer()
+        'display_manager': MockDisplayManager()
     }
     
     # Apply overrides

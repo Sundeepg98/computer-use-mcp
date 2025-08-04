@@ -109,15 +109,6 @@ def capture_screenshot():
     return b'mock_screenshot_data'
 
 
-class MockVisualAnalyzer:
-    """Mock visual analyzer for testing"""
-    def analyze(self, image_data, query):
-        return {
-            'analysis': f'Mock analysis of: {query}',
-            'objects_detected': [],
-            'text_found': '',
-            'mock': True
-        }
 
 
 def create_test_computer_use(**overrides):

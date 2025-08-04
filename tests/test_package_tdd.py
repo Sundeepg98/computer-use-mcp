@@ -2,7 +2,7 @@
 """
 TDD Test Suite for Computer Use MCP Package
 Written BEFORE implementation to drive development
-Following true Test-Driven Development methodology with ultrathink
+Following true Test-Driven Development methodology
 """
 
 import unittest
@@ -581,50 +581,6 @@ class TestSafetyAndSecurity(unittest.TestCase):
                 f"Incorrectly blocked: {safe}"
             )
 
-class TestUltrathinkIntegration(unittest.TestCase):
-    """Test ultrathink visual analysis integration - TDD"""
-    
-    def setUp(self):
-        self.package_root = Path(__file__).parent.parent
-        sys.path.insert(0, str(self.package_root / 'src'))
-    
-    def test_ultrathink_analyzer_exists(self):
-        """Test ultrathink analyzer can be imported"""
-        from visual_analyzer import VisualAnalyzerAdvanced
-        
-        analyzer = VisualAnalyzerAdvanced()
-        self.assertIsNotNone(analyzer)
-    
-    def test_ultrathink_planning(self):
-        """Test ultrathink can plan tasks"""
-        from visual_analyzer import VisualAnalyzerAdvanced
-        
-        analyzer = VisualAnalyzerAdvanced()
-        plan = analyzer.plan_task("Click the submit button")
-        
-        self.assertIn('steps', plan)
-        self.assertIsInstance(plan['steps'], list)
-        self.assertTrue(len(plan['steps']) > 0)
-    
-    def test_ultrathink_analysis(self):
-        """Test ultrathink can analyze screens"""
-        from visual_analyzer import VisualAnalyzerAdvanced
-        
-        analyzer = VisualAnalyzerAdvanced()
-        
-        mock_screenshot = {
-            'width': 1920,
-            'height': 1080,
-            'data': 'base64_image_data'
-        }
-        
-        analysis = analyzer.analyze_screen(
-            mock_screenshot,
-            "Find interactive elements"
-        )
-        
-        self.assertIsInstance(analysis, dict)
-        self.assertIn('elements', analysis)
 
 class TestContinuousIntegration(unittest.TestCase):
     """Test CI/CD configuration - TDD"""

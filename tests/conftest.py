@@ -30,14 +30,6 @@ def mock_safety_checker():
     return SafetyChecker()
 
 
-@pytest.fixture
-def mock_ultrathink():
-    """Mock ultrathink analyzer for testing"""
-    from mcp.visual_analyzer import VisualAnalyzer as VisualAnalyzerAdvanced
-    analyzer = VisualAnalyzerAdvanced()
-    analyzer.analyze_screen = Mock(return_value={'elements': []})
-    analyzer.plan_task = Mock(return_value={'steps': ['step1', 'step2']})
-    return analyzer
 
 
 @pytest.fixture
