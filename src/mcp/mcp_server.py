@@ -47,14 +47,10 @@ class ComputerUseServer:
         return [
             {
                 "name": "screenshot",
-                "description": "Capture and analyze screenshot with ultrathink - MCP Enhanced with method selection",
+                "description": "Capture a screenshot and save to file",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "analyze": {
-                            "type": "string",
-                            "description": "What to analyze in the screenshot"
-                        },
                         "method": {
                             "type": "string",
                             "description": "Screenshot method to use",
@@ -73,10 +69,6 @@ class ComputerUseServer:
                             "type": "string",
                             "description": "Optional path to save screenshot file"
                         },
-                        "query": {
-                            "type": "string", 
-                            "description": "Specific question to ask about the screenshot"
-                        }
                     }
                 }
             },
@@ -998,12 +990,10 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
             return self.error_response(request_id, str(e))
     
     def handle_screenshot(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle screenshot tool - MCP Enhanced with method selection"""
+        """Handle screenshot tool - captures and saves screenshots"""
         # Extract parameters
-        analyze_prompt = args.get("analyze", "")
         method = args.get("method", "recommended")
         save_path = args.get("save_path", "")
-        query = args.get("query", analyze_prompt)
         
         # If no save_path is provided, don't actually take the screenshot
         # This avoids creating large intermediate objects
@@ -1013,8 +1003,6 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
                 "message": "save_path parameter is required to capture screenshots",
                 "note": "Screenshots must be saved to disk to avoid token limits"
             }
-            if analyze_prompt:
-                result["query"] = analyze_prompt
             return result
         
         # Take screenshot only if we're going to save it
@@ -1034,10 +1022,10 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
             except Exception as e:
                 # Fallback to default method if specific method fails
                 log(f"Specific method {method} failed: {e}")
-                screenshot_result = self.computer.take_screenshot(analyze=query)
+                screenshot_result = self.computer.take_screenshot()
         else:
             # Use recommended method (current behavior)
-            screenshot_result = self.computer.take_screenshot(analyze=query)
+            screenshot_result = self.computer.take_screenshot()
         
         # Extract the actual image data only if we need to save it
         screenshot_data = None
@@ -1085,11 +1073,6 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
         else:
             result["message"] = "Screenshot captured (use save_path parameter to save to file)"
             
-        # Add query if one was provided
-        if analyze_prompt:
-            result["query"] = analyze_prompt
-            result["note"] = "Visual analysis requires direct API integration with Claude's vision capabilities"
-        
         return result
     
     def handle_click(self, args: Dict[str, Any]) -> Dict[str, Any]:

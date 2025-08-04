@@ -14,7 +14,6 @@ from .platform_utils import get_platform_info, get_recommended_screenshot_method
 from .screenshot import ScreenshotFactory
 from .input import InputFactory
 from .safety_checks import SafetyChecker
-from .visual_analyzer import VisualAnalyzer
 
 # Import platform implementations
 from .implementations.platform_info_impl import PlatformInfoImpl
@@ -49,9 +48,6 @@ class ComputerUseFactory:
         # Create display manager
         display_manager = DisplayManagerImpl()
         
-        # Create visual analyzer
-        visual_analyzer = VisualAnalyzer()
-        
         # Create and return configured instance
         return ComputerUseRefactored(
             screenshot_provider=screenshot_provider,
@@ -59,7 +55,7 @@ class ComputerUseFactory:
             platform_info=platform_info,
             safety_validator=safety_validator,
             display_manager=display_manager,
-            visual_analyzer=visual_analyzer,
+,
             enable_ultrathink=True
         )
     
@@ -70,7 +66,6 @@ class ComputerUseFactory:
         platform_info=None,
         safety_validator=None,
         display_manager=None,
-        visual_analyzer=None,
         enable_ultrathink=True
     ) -> ComputerUseRefactored:
         """
@@ -84,7 +79,6 @@ class ComputerUseFactory:
             platform_info: Custom platform info implementation
             safety_validator: Custom safety validator
             display_manager: Custom display manager
-            visual_analyzer: Custom visual analyzer
             enable_ultrathink: Enable deep analysis mode
             
         Returns:
@@ -96,15 +90,13 @@ class ComputerUseFactory:
         platform_info = platform_info or PlatformInfoImpl()
         safety_validator = safety_validator or SafetyChecker()
         display_manager = display_manager or DisplayManagerImpl()
-        visual_analyzer = visual_analyzer or VisualAnalyzer()
-        
         return ComputerUseRefactored(
             screenshot_provider=screenshot_provider,
             input_provider=input_provider,
             platform_info=platform_info,
             safety_validator=safety_validator,
             display_manager=display_manager,
-            visual_analyzer=visual_analyzer,
+,
             enable_ultrathink=enable_ultrathink
         )
 

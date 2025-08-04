@@ -13,7 +13,6 @@ from .abstractions import (
     ScreenshotProvider, InputProvider, PlatformInfo, 
     SafetyValidator, DisplayManager
 )
-from .visual_analyzer import VisualAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +35,6 @@ class ComputerUseRefactored:
         platform_info: PlatformInfo,
         safety_validator: SafetyValidator,
         display_manager: DisplayManager,
-        visual_analyzer: Optional[VisualAnalyzer] = None,
         enable_ultrathink: bool = True
     ):
         """
@@ -48,7 +46,6 @@ class ComputerUseRefactored:
             platform_info: Platform information provider
             safety_validator: Safety validation implementation
             display_manager: Display management implementation
-            visual_analyzer: Optional visual analysis implementation
             enable_ultrathink: Enable deep analysis mode
         """
         self.screenshot = screenshot_provider
@@ -56,7 +53,6 @@ class ComputerUseRefactored:
         self.platform = platform_info
         self.safety = safety_validator
         self.display = display_manager
-        self.visual_analyzer = visual_analyzer or VisualAnalyzer()
         self.ultrathink_enabled = enable_ultrathink
         
         # Add compatibility attributes
@@ -67,7 +63,7 @@ class ComputerUseRefactored:
         environment = self.platform.get_environment()
         logger.info(f"Initialized on {platform} ({environment})")
     
-    def take_screenshot(self, analyze: Optional[str] = None) -> Dict[str, Any]:
+    def take_screenshot(self) -> Dict[str, Any]:
         """Take a screenshot with optional analysis"""
         try:
             # Check display availability
@@ -88,11 +84,6 @@ class ComputerUseRefactored:
                 'method': self.screenshot.__class__.__name__
             }
             
-            # Perform analysis if requested
-            if analyze and self.ultrathink_enabled:
-                logger.info("Ultrathink: Performing deep visual analysis")
-                analysis = self.visual_analyzer.analyze_screen(screenshot_data, analyze)
-                result['analysis'] = analysis
             
             return result
             
