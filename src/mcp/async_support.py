@@ -91,8 +91,6 @@ class ComputerUseAsync:
         platform_info: PlatformInfo,
         safety_validator: SafetyValidator,
         display_manager: DisplayManager,
-        visual_analyzer: Optional[Any] = None,
-        enable_ultrathink: bool = True
     ):
         """Initialize async computer use"""
         self.screenshot = screenshot_provider
@@ -100,8 +98,6 @@ class ComputerUseAsync:
         self.platform = platform_info
         self.safety = safety_validator
         self.display = display_manager
-        self.visual_analyzer = visual_analyzer
-        self.ultrathink_enabled = enable_ultrathink
         
         # Get platform info
         self.display_available = self.display.is_display_available()
@@ -115,11 +111,9 @@ class ComputerUseAsync:
             platform_info=sync_computer_use.platform,
             safety_validator=sync_computer_use.safety,
             display_manager=sync_computer_use.display,
-            visual_analyzer=sync_computer_use.visual_analyzer,
-            enable_ultrathink=sync_computer_use.ultrathink_enabled
         )
     
-    async def take_screenshot(self, analyze: Optional[str] = None) -> Dict[str, Any]:
+    async def take_screenshot(self) -> Dict[str, Any]:
         """Take a screenshot asynchronously"""
         try:
             # Check display availability
@@ -139,19 +133,6 @@ class ComputerUseAsync:
                 'platform': self.platform.get_platform(),
                 'method': self.screenshot.__class__.__name__
             }
-            
-            # Perform analysis if requested
-            if analyze and self.ultrathink_enabled and self.visual_analyzer:
-                # Run analysis in thread pool if sync
-                if hasattr(self.visual_analyzer, 'analyze'):
-                    loop = asyncio.get_event_loop()
-                    analysis = await loop.run_in_executor(
-                        None, self.visual_analyzer.analyze, screenshot_data, analyze
-                    )
-                else:
-                    # Assume async analyzer
-                    analysis = await self.visual_analyzer.analyze(screenshot_data, analyze)
-                result['analysis'] = analysis
             
             return result
             
@@ -237,7 +218,7 @@ class ComputerUseAsync:
         
         for op in operations:
             if op['type'] == 'screenshot':
-                task = self.take_screenshot(op.get('analyze'))
+                task = self.take_screenshot()
             elif op['type'] == 'click':
                 task = self.click(op['x'], op['y'], op.get('button', 'left'))
             elif op['type'] == 'type':

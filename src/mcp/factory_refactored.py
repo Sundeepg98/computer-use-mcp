@@ -54,8 +54,7 @@ class ComputerUseFactory:
             input_provider=input_provider,
             platform_info=platform_info,
             safety_validator=safety_validator,
-            display_manager=display_manager,
-            enable_ultrathink=True
+            display_manager=display_manager
         )
     
     @staticmethod
@@ -64,8 +63,7 @@ class ComputerUseFactory:
         input_provider=None,
         platform_info=None,
         safety_validator=None,
-        display_manager=None,
-        enable_ultrathink=True
+        display_manager=None
     ) -> ComputerUseRefactored:
         """
         Create a ComputerUse instance with custom implementations
@@ -78,7 +76,6 @@ class ComputerUseFactory:
             platform_info: Custom platform info implementation
             safety_validator: Custom safety validator
             display_manager: Custom display manager
-            enable_ultrathink: Enable deep analysis mode
             
         Returns:
             ComputerUseRefactored with custom implementations
@@ -94,8 +91,7 @@ class ComputerUseFactory:
             input_provider=input_provider,
             platform_info=platform_info,
             safety_validator=safety_validator,
-            display_manager=display_manager,
-            enable_ultrathink=enable_ultrathink
+            display_manager=display_manager
         )
 
 

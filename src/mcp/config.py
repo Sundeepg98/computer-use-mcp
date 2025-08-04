@@ -38,7 +38,6 @@ class ComputerUseConfig:
     def _apply_defaults(self):
         """Apply default configuration values"""
         defaults = {
-            'ultrathink_enabled': True,
             'safety_checks_enabled': True,
             'mode': 'personal',
             'screen_resolution': (1920, 1080),
@@ -86,15 +85,6 @@ class ComputerUseConfig:
                 'audit_logging'
             ]
     
-    @property
-    def ultrathink_enabled(self) -> bool:
-        """Check if ultrathink is enabled"""
-        return self.config.get('ultrathink_enabled', True)
-    
-    @ultrathink_enabled.setter
-    def ultrathink_enabled(self, value: bool):
-        """Set ultrathink enabled state"""
-        self.config['ultrathink_enabled'] = value
     
     @property
     def safety_checks_enabled(self) -> bool:
@@ -210,7 +200,6 @@ class ComputerUseConfig:
         """Get configuration status"""
         return {
             'mode': self.config.get('mode'),
-            'ultrathink_enabled': self.ultrathink_enabled,
             'safety_checks_enabled': self.safety_checks_enabled,
             'safety_rules_count': len(self.safety_rules),
             'config_path': self.config_path,
@@ -219,7 +208,7 @@ class ComputerUseConfig:
     
     def validate(self) -> bool:
         """Validate configuration"""
-        required_keys = ['mode', 'ultrathink_enabled', 'safety_checks_enabled']
+        required_keys = ['mode', 'safety_checks_enabled']
         
         for key in required_keys:
             if key not in self.config:

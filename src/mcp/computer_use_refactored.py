@@ -35,7 +35,6 @@ class ComputerUseRefactored:
         platform_info: PlatformInfo,
         safety_validator: SafetyValidator,
         display_manager: DisplayManager,
-        enable_ultrathink: bool = True
     ):
         """
         Initialize with injected dependencies
@@ -46,14 +45,12 @@ class ComputerUseRefactored:
             platform_info: Platform information provider
             safety_validator: Safety validation implementation
             display_manager: Display management implementation
-            enable_ultrathink: Enable deep analysis mode
         """
         self.screenshot = screenshot_provider
         self.input = input_provider
         self.platform = platform_info
         self.safety = safety_validator
         self.display = display_manager
-        self.ultrathink_enabled = enable_ultrathink
         
         # Add compatibility attributes
         self.display_available = self.display.is_display_available()
@@ -122,8 +119,6 @@ class ComputerUseRefactored:
                     'error': 'No display available'
                 }
             
-            if self.ultrathink_enabled:
-                logger.info(f"Ultrathink: Verifying click target at ({x}, {y})")
             
             # Perform click
             success = self.input.click(x, y, button)
@@ -153,8 +148,6 @@ class ComputerUseRefactored:
                     'error': f'Safety check failed: {error}'
                 }
             
-            if self.ultrathink_enabled:
-                logger.info("Ultrathink: Analyzing text input context")
             
             # Type text
             success = self.input.type_text(text)

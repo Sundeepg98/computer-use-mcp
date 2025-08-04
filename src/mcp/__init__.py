@@ -11,18 +11,13 @@ from .computer_use_refactored import ComputerUseRefactored
 from .computer_use_core import ComputerUseCore  # Backward compatibility wrapper
 from .factory_refactored import create_computer_use, create_computer_use_for_testing
 from .safety_checks import SafetyChecker
-from .visual_analyzer import VisualAnalyzer
 
 # Import original components
 try:
-    from .visual_mode import VisualMode
-    from .claude_integration import ClaudeComputerUse
     from .error_handler import ComputerUseErrorHandler
     from .config import ComputerUseConfig
 except ImportError:
     # Some components might not be available
-    VisualMode = None
-    ClaudeComputerUse = None
     ComputerUseErrorHandler = None
     ComputerUseConfig = None
 
@@ -104,9 +99,6 @@ __all__ = [
     
     # Original exports
     'SafetyChecker',
-    'VisualAnalyzer',
-    'VisualMode',
-    'ClaudeComputerUse',
     'ComputerUseErrorHandler',
     'ComputerUseConfig',
     
