@@ -187,7 +187,7 @@ class ComputerUseServer:
             },
             {
                 "name": "automate",
-                "description": "Automate a complex task with ultrathink planning",
+                "description": "Automate a complex task (placeholder - not implemented)",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -902,9 +902,6 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
         except Exception as e:
             if "BLOCKED" in str(e):
                 return self.error_response(request_id, str(e))
-        
-        # Add ultrathink enhancement
-        log(f"Ultrathink analyzing: {tool_name} with {arguments}")
         
         # Execute tool
         try:
