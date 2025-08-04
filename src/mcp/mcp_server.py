@@ -1005,7 +1005,19 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
         save_path = args.get("save_path", "")
         query = args.get("query", analyze_prompt)
         
-        # MCP Enhancement: Use specific screenshot method if requested
+        # If no save_path is provided, don't actually take the screenshot
+        # This avoids creating large intermediate objects
+        if not save_path:
+            result = {
+                "status": "error",
+                "message": "save_path parameter is required to capture screenshots",
+                "note": "Screenshots must be saved to disk to avoid token limits"
+            }
+            if analyze_prompt:
+                result["query"] = analyze_prompt
+            return result
+        
+        # Take screenshot only if we're going to save it
         if method != "recommended":
             try:
                 from .screenshot import ScreenshotFactory
@@ -1027,11 +1039,13 @@ powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Window
             # Use recommended method (current behavior)
             screenshot_result = self.computer.take_screenshot(analyze=query)
         
-        # Extract the actual image data
-        if isinstance(screenshot_result, dict):
-            screenshot_data = screenshot_result.get('data', b'')
-        else:
-            screenshot_data = screenshot_result
+        # Extract the actual image data only if we need to save it
+        screenshot_data = None
+        if save_path:
+            if isinstance(screenshot_result, dict):
+                screenshot_data = screenshot_result.get('data', b'')
+            else:
+                screenshot_data = screenshot_result
         
         # Save to file if save_path is provided
         saved_to = None
