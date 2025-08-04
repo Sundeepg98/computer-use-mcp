@@ -55,7 +55,6 @@ class ComputerUseFactory:
             platform_info=platform_info,
             safety_validator=safety_validator,
             display_manager=display_manager,
-,
             enable_ultrathink=True
         )
     
@@ -96,7 +95,6 @@ class ComputerUseFactory:
             platform_info=platform_info,
             safety_validator=safety_validator,
             display_manager=display_manager,
-,
             enable_ultrathink=enable_ultrathink
         )
 
