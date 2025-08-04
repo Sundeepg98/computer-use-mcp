@@ -10,9 +10,9 @@ import os
 import base64
 from typing import Dict, Any, List, Optional
 
-from computer_use_core import ComputerUseCore
-from safety_checks import SafetyChecker
-from visual_analyzer import VisualAnalyzer
+from .computer_use_core import ComputerUseCore
+from .safety_checks import SafetyChecker
+from .visual_analyzer import VisualAnalyzer
 
 # Simple stderr logging for debugging
 def log(message):
@@ -177,6 +177,76 @@ class ComputerUseServer:
                     },
                     "required": ["task"]
                 }
+            },
+            {
+                "name": "install_xserver",
+                "description": "Install X server packages for display support",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
+                "name": "start_xserver",
+                "description": "Start virtual X server with specified configuration",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "display_num": {
+                            "type": "integer",
+                            "default": 99,
+                            "description": "Display number (e.g., 99 for :99)"
+                        },
+                        "width": {
+                            "type": "integer",
+                            "default": 1920,
+                            "description": "Screen width in pixels"
+                        },
+                        "height": {
+                            "type": "integer",
+                            "default": 1080,
+                            "description": "Screen height in pixels"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "stop_xserver",
+                "description": "Stop X server by display name",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "display": {
+                            "type": "string",
+                            "description": "Display to stop (e.g., ':99')"
+                        }
+                    },
+                    "required": ["display"]
+                }
+            },
+            {
+                "name": "setup_wsl_xforwarding",
+                "description": "Setup X11 forwarding for WSL2 to Windows host",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
+                "name": "xserver_status",
+                "description": "Get status of X servers and display configuration",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
+                "name": "test_display",
+                "description": "Test current display configuration",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
             }
         ]
     
@@ -197,14 +267,34 @@ class ComputerUseServer:
     
     def handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Handle incoming MCP request"""
-        method = request.get("method")
-        params = request.get("params", {})
+        # Validate JSON-RPC 2.0 structure
         request_id = request.get("id")
         
-        # Notifications (no id field) should not return a response
-        if request_id is None and "id" not in request:
+        # Check for jsonrpc field
+        if "jsonrpc" not in request:
+            return self.error_response(request_id, "Missing 'jsonrpc' field")
+        
+        if request["jsonrpc"] != "2.0":
+            return self.error_response(request_id, f"Invalid jsonrpc version: {request['jsonrpc']}")
+        
+        # Check for method field
+        if "method" not in request:
+            return self.error_response(request_id, "Missing 'method' field")
+        
+        method = request.get("method")
+        if method is None:
+            return self.error_response(request_id, "Method cannot be null")
+        
+        # For non-notifications, id must be present
+        if "id" not in request:
             # This is a notification, process but don't respond
             return None
+        
+        # Check if id is null (test expects this to be invalid)
+        if request_id is None:
+            return self.error_response(request_id, "ID cannot be null")
+        
+        params = request.get("params", {})
         
         try:
             if method == "initialize":
@@ -212,6 +302,9 @@ class ComputerUseServer:
             elif method == "tools/list":
                 return self.list_tools(request_id)
             elif method == "tools/call":
+                # Validate params for tools/call
+                if method == "tools/call" and params is None:
+                    return self.error_response(request_id, "Missing params for tools/call")
                 return self.call_tool(params, request_id)
             else:
                 return self.error_response(request_id, f"Unknown method: {method}")
@@ -260,7 +353,14 @@ class ComputerUseServer:
     
     def call_tool(self, params: Dict[str, Any], request_id: Any) -> Dict[str, Any]:
         """Execute tool call"""
+        # Validate params structure
+        if not isinstance(params, dict):
+            return self.error_response(request_id, "Params must be an object")
+        
         tool_name = params.get("name")
+        if not tool_name:
+            return self.error_response(request_id, "Missing tool name")
+        
         arguments = params.get("arguments", {})
         
         # Safety check first
@@ -292,6 +392,18 @@ class ComputerUseServer:
                 result = self.handle_wait(arguments)
             elif tool_name == "automate":
                 result = self.handle_automate(arguments)
+            elif tool_name == "install_xserver":
+                result = self.handle_install_xserver(arguments)
+            elif tool_name == "start_xserver":
+                result = self.handle_start_xserver(arguments)
+            elif tool_name == "stop_xserver":
+                result = self.handle_stop_xserver(arguments)
+            elif tool_name == "setup_wsl_xforwarding":
+                result = self.handle_setup_wsl_xforwarding(arguments)
+            elif tool_name == "xserver_status":
+                result = self.handle_xserver_status(arguments)
+            elif tool_name == "test_display":
+                result = self.handle_test_display(arguments)
             else:
                 return self.error_response(request_id, f"Unknown tool: {tool_name}")
             
@@ -347,22 +459,37 @@ class ComputerUseServer:
             # Would need element detection
             return {"error": "Element detection not yet implemented"}
         
-        x = args.get("x", 0)
-        y = args.get("y", 0)
+        # Get coordinates without defaults
+        x = args.get("x")
+        y = args.get("y")
         button = args.get("button", "left")
         
-        return self.computer.click(x, y, button)
+        # Validate coordinates are present
+        if x is None or y is None:
+            raise ValueError("Missing required coordinates x and y")
+        
+        try:
+            x_int = int(x)
+            y_int = int(y)
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid coordinates: x={x}, y={y}")
+        
+        return self.computer.click(x_int, y_int, button)
     
     def handle_type(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle type tool"""
         text = args.get("text", "")
         
-        # Safety check content
-        content_check = self.safety.check_content(text)
-        if not content_check['safe']:
-            text = self.safety.sanitize_text(text)
+        # Validate text
+        if text is None:
+            raise ValueError("Text cannot be None")
         
-        return self.computer.type_text(text)
+        # Safety check content
+        content_check = self.safety.check_content(str(text))
+        if not content_check['safe']:
+            text = self.safety.sanitize_text(str(text))
+        
+        return self.computer.type_text(str(text))
     
     def handle_key(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle key press tool"""
@@ -373,20 +500,53 @@ class ComputerUseServer:
         """Handle scroll tool"""
         direction = args.get("direction", "down")
         amount = args.get("amount", 3)
-        return self.computer.scroll(direction, amount)
+        
+        # Validate direction
+        if direction not in ["up", "down"]:
+            raise ValueError(f"Invalid scroll direction: {direction}")
+        
+        # Validate amount
+        try:
+            amount_int = int(amount)
+            if amount_int < 0:
+                raise ValueError(f"Scroll amount must be positive: {amount}")
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid scroll amount: {amount}")
+        
+        return self.computer.scroll(direction, amount_int)
     
     def handle_drag(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle drag tool"""
-        start_x = args.get("start_x", 0)
-        start_y = args.get("start_y", 0)
-        end_x = args.get("end_x", 0)
-        end_y = args.get("end_y", 0)
-        return self.computer.drag(start_x, start_y, end_x, end_y)
+        start_x = args.get("start_x")
+        start_y = args.get("start_y")
+        end_x = args.get("end_x")
+        end_y = args.get("end_y")
+        
+        # Validate all coordinates are present
+        if start_x is None or start_y is None or end_x is None or end_y is None:
+            raise ValueError("All drag coordinates must be provided")
+        
+        try:
+            start_x_int = int(start_x)
+            start_y_int = int(start_y)
+            end_x_int = int(end_x)
+            end_y_int = int(end_y)
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid drag coordinates")
+        
+        return self.computer.drag(start_x_int, start_y_int, end_x_int, end_y_int)
     
     def handle_wait(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle wait tool"""
         seconds = args.get("seconds", 1.0)
-        return self.computer.wait(seconds)
+        
+        # Validate seconds
+        try:
+            seconds_float = float(seconds)
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid wait duration: {seconds}")
+        
+        return self.computer.wait(seconds_float)
     
     def handle_automate(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle automation tool"""
@@ -407,6 +567,36 @@ class ComputerUseServer:
             "plan": plan,
             "results": results
         }
+    
+    def handle_install_xserver(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle X server installation"""
+        return self.computer.install_xserver()
+    
+    def handle_start_xserver(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle starting X server"""
+        display_num = args.get("display_num", 99)
+        width = args.get("width", 1920)
+        height = args.get("height", 1080)
+        return self.computer.start_xserver(display_num, width, height)
+    
+    def handle_stop_xserver(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle stopping X server"""
+        display = args.get("display")
+        if not display:
+            return {"error": "Display parameter required"}
+        return self.computer.stop_xserver(display)
+    
+    def handle_setup_wsl_xforwarding(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle WSL X11 forwarding setup"""
+        return self.computer.setup_wsl_xforwarding()
+    
+    def handle_xserver_status(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle X server status request"""
+        return self.computer.get_xserver_status()
+    
+    def handle_test_display(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle display test request"""
+        return self.computer.test_display()
     
     def error_response(self, request_id: Any, message: str) -> Dict[str, Any]:
         """Create error response"""

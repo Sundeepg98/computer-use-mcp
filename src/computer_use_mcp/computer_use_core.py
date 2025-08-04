@@ -43,13 +43,17 @@ def capture_screenshot() -> bytes:
             'name': 'powershell',
             'cmd': ['powershell.exe', '-Command', 
                    'Add-Type -AssemblyName System.Windows.Forms; ' +
-                   '[System.Windows.Forms.Screen]::PrimaryScreen.Bounds | Out-Null; ' +
-                   '$bitmap = New-Object System.Drawing.Bitmap([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width, [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height); ' +
+                   'Add-Type -AssemblyName System.Drawing; ' +
+                   '$bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; ' +
+                   '$bitmap = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height); ' +
                    '$graphics = [System.Drawing.Graphics]::FromImage($bitmap); ' +
-                   '$graphics.CopyFromScreen(0, 0, 0, 0, $bitmap.Size); ' +
-                   '$bitmap.Save("/tmp/screenshot.png", [System.Drawing.Imaging.ImageFormat]::Png); ' +
-                   '$graphics.Dispose(); $bitmap.Dispose()'],
-            'read_file': '/tmp/screenshot.png'
+                   '$graphics.CopyFromScreen(0, 0, 0, 0, $bounds.Size); ' +
+                   '$tempPath = [System.IO.Path]::GetTempPath() + "wsl_screenshot.png"; ' +
+                   '$bitmap.Save($tempPath, [System.Drawing.Imaging.ImageFormat]::Png); ' +
+                   '$graphics.Dispose(); $bitmap.Dispose(); ' +
+                   'Write-Output $tempPath'],
+            'read_file': None,
+            'get_temp_path': True
         }
     ]
     
@@ -78,6 +82,20 @@ def capture_screenshot() -> bytes:
                     if data:
                         print(f"Screenshot captured using {method['name']}", file=sys.stderr)
                         return data
+            elif method.get('get_temp_path'):
+                # PowerShell method outputs temp file path
+                if result.returncode == 0 and result.stdout:
+                    temp_path = result.stdout.decode().strip()
+                    # Convert Windows path to WSL path
+                    if temp_path.startswith('C:'):
+                        wsl_path = '/mnt/c' + temp_path[2:].replace('\\', '/')
+                        if os.path.exists(wsl_path):
+                            with open(wsl_path, 'rb') as f:
+                                data = f.read()
+                            os.unlink(wsl_path)  # Clean up
+                            if data:
+                                print(f"Screenshot captured using {method['name']}", file=sys.stderr)
+                                return data
             elif method.get('convert'):
                 # Method needs conversion
                 if result.returncode == 0:
@@ -129,33 +147,56 @@ class ComputerUseCore:
         self.test_mode = test_mode
         self.safety_checks = True
         self.ultrathink_enabled = True
-        self.display_available = bool(os.environ.get('DISPLAY'))
+        
+        # Initialize X server manager
+        try:
+            from .xserver_manager import XServerManager
+            self.xserver_manager = XServerManager()
+        except Exception as e:
+            logger.warning(f"Failed to initialize X server manager: {e}")
+            self.xserver_manager = None
+        
+        # Setup display
         if not test_mode:
             self._init_display()
+        else:
+            self.display_available = False
         
         # Initialize safety checker
-        from safety_checks import SafetyChecker
+        from .safety_checks import SafetyChecker
         self.safety_checker = SafetyChecker()
     
     def _init_display(self):
-        """Initialize display connection if available"""
-        if self.display_available:
-            try:
-                # Set up X11 forwarding for WSL2
-                if 'WSL' in os.environ.get('WSL_DISTRO_NAME', ''):
-                    # Get Windows host IP for X server
-                    result = subprocess.run(
-                        ['cat', '/etc/resolv.conf'],
-                        capture_output=True,
-                        text=True
-                    )
-                    for line in result.stdout.split('\n'):
-                        if 'nameserver' in line:
-                            host_ip = line.split()[1]
-                            os.environ['DISPLAY'] = f"{host_ip}:0"
-                            break
-            except Exception as e:
-                logger.warning(f"Display initialization warning: {e}")
+        """Initialize display connection using X Server Manager"""
+        if self.xserver_manager is None:
+            logger.warning("X server manager not available, display initialization skipped")
+            self.display_available = False
+            self.display_info = {'error': 'X server manager not initialized'}
+            return
+            
+        try:
+            # Get best available display
+            display_result = self.xserver_manager.get_best_display()
+            
+            if display_result['available']:
+                self.display_available = True
+                self.display_info = display_result
+                logger.info(f"Display initialized: {display_result['display']} ({display_result['method']})")
+            else:
+                self.display_available = False
+                self.display_info = display_result
+                logger.warning(f"No display available: {display_result.get('error', 'Unknown error')}")
+                
+                # Log suggestions for fixing display issues
+                if 'suggestions' in display_result:
+                    logger.info("Suggestions to fix display:")
+                    for suggestion in display_result['suggestions']:
+                        logger.info(f"  - {suggestion}")
+                        
+        except Exception as e:
+            logger.error(f"Display initialization failed: {e}")
+            self.display_available = False
+            self.display_info = {'error': str(e)}
     
     def screenshot(self, analyze=None) -> Dict[str, Any]:
         """Capture current screen"""
@@ -402,3 +443,126 @@ class ComputerUseCore:
                 'action': 'drag',
                 'error': str(e)
             }
+    
+    def install_xserver(self) -> Dict[str, Any]:
+        """Install X server packages"""
+        logger.info("Installing X server packages")
+        
+        if self.xserver_manager is None:
+            return {'error': 'X server manager not available'}
+        
+        if self.ultrathink_enabled:
+            logger.info("Ultrathink: Planning X server installation strategy")
+        
+        return self.xserver_manager.install_xserver_packages()
+    
+    def start_xserver(self, display_num: int = 99, 
+                     width: int = 1920, height: int = 1080) -> Dict[str, Any]:
+        """Start virtual X server"""
+        logger.info(f"Starting virtual X server :{display_num} ({width}x{height})")
+        
+        if self.xserver_manager is None:
+            return {'success': False, 'error': 'X server manager not available'}
+        
+        if self.ultrathink_enabled:
+            logger.info("Ultrathink: Optimizing virtual display configuration")
+        
+        result = self.xserver_manager.start_virtual_display(display_num, width, height)
+        
+        if result['success']:
+            # Update our display status
+            self.display_available = True
+            self.display_info = {
+                'display': result['display'],
+                'method': 'virtual_display',
+                'resolution': result['resolution']
+            }
+            os.environ['DISPLAY'] = result['display']
+        
+        return result
+    
+    def stop_xserver(self, display: str) -> Dict[str, Any]:
+        """Stop X server"""
+        logger.info(f"Stopping X server {display}")
+        
+        if self.xserver_manager is None:
+            return {'success': False, 'error': 'X server manager not available'}
+        
+        result = self.xserver_manager.stop_xserver(display)
+        
+        # Update display status if we stopped the current display
+        if result['success'] and display == os.environ.get('DISPLAY'):
+            self.display_available = False
+            if 'DISPLAY' in os.environ:
+                del os.environ['DISPLAY']
+        
+        return result
+    
+    def setup_wsl_xforwarding(self) -> Dict[str, Any]:
+        """Setup WSL2 X11 forwarding"""
+        logger.info("Setting up WSL2 X11 forwarding")
+        
+        if self.xserver_manager is None:
+            return {'success': False, 'error': 'X server manager not available'}
+        
+        if self.ultrathink_enabled:
+            logger.info("Ultrathink: Configuring optimal WSL2 X forwarding")
+        
+        result = self.xserver_manager.setup_wsl_xforwarding()
+        
+        if result['success']:
+            self.display_available = True
+            self.display_info = {
+                'display': result['display'],
+                'method': 'wsl_xforwarding',
+                'host_ip': result['host_ip']
+            }
+        
+        return result
+    
+    def get_xserver_status(self) -> Dict[str, Any]:
+        """Get X server status"""
+        if self.xserver_manager is None:
+            return {
+                'error': 'X server manager not available',
+                'display_available': self.display_available,
+                'display_info': getattr(self, 'display_info', {})
+            }
+        
+        base_status = self.xserver_manager.get_status()
+        
+        return {
+            **base_status,
+            'display_available': self.display_available,
+            'display_info': getattr(self, 'display_info', {})
+        }
+    
+    def test_display(self) -> Dict[str, Any]:
+        """Test current display configuration"""
+        if self.xserver_manager is None:
+            return {'success': False, 'error': 'X server manager not available'}
+        
+        current_display = os.environ.get('DISPLAY')
+        if not current_display:
+            return {
+                'success': False,
+                'error': 'No DISPLAY environment variable set'
+            }
+        
+        return self.xserver_manager.check_xserver_available(current_display)
+    
+    def cleanup_xservers(self) -> Dict[str, Any]:
+        """Cleanup all managed X servers"""
+        logger.info("Cleaning up all X servers")
+        
+        if self.xserver_manager is None:
+            return {'error': 'X server manager not available', 'stopped_servers': 0}
+        
+        result = self.xserver_manager.cleanup_all()
+        
+        # Reset display status
+        self.display_available = False
+        if 'DISPLAY' in os.environ:
+            del os.environ['DISPLAY']
+        
+        return result

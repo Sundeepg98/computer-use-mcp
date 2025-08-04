@@ -8,10 +8,13 @@ A powerful MCP (Model Context Protocol) server that provides computer use tools 
 
 ## Features
 
-- **8 Computer Control Tools**: Screenshot, click, type, key press, scroll, drag, wait, and automate
+- **14 Computer Control Tools**: Screenshot, click, type, key press, scroll, drag, wait, automate, plus 6 X server management tools
+- **X Server Management**: Built-in support for X server installation, configuration, and lifecycle management
 - **Visual Analysis**: Deep analysis of screen content and intelligent action planning
 - **Safety Checks**: Comprehensive protection against dangerous commands and sensitive data exposure
 - **Cross-Platform Support**: Works on Linux, macOS, and Windows (with WSL2)
+- **WSL2 Integration**: Automatic X11 forwarding configuration for Windows Subsystem for Linux
+- **Virtual Display Support**: Headless operation with Xvfb for CI/CD environments
 - **MCP Native**: Seamless integration with Claude and other MCP-compatible clients
 
 ## Installation
@@ -42,6 +45,58 @@ cd computer-use-mcp
 pip install -r requirements.txt
 python3 src/mcp_server.py
 ```
+
+## X Server Setup
+
+Computer Use MCP requires an X server for screenshot and interaction capabilities. The package includes automatic X server detection and management.
+
+### Quick Setup
+
+Run the included setup script to check your X server configuration:
+```bash
+./setup_xserver.sh
+```
+
+### WSL2 Setup
+
+For Windows Subsystem for Linux users:
+
+1. **Install X Server on Windows** (choose one):
+   - [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (free, recommended)
+   - [X410](https://x410.dev/) (paid, from Microsoft Store)
+   - [Xming](https://sourceforge.net/projects/xming/) (free)
+
+2. **Configure X Server**:
+   - Launch with "Multiple windows" mode
+   - Disable access control
+   - Allow connections from WSL2
+
+3. **Set DISPLAY in WSL2**:
+   ```bash
+   export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
+   ```
+
+4. **Add to ~/.bashrc** for persistence:
+   ```bash
+   echo 'export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0' >> ~/.bashrc
+   ```
+
+### Virtual Display (Headless)
+
+For CI/CD or headless environments, use Xvfb:
+```bash
+# Install Xvfb
+sudo apt-get install xvfb
+
+# Start virtual display
+Xvfb :99 -screen 0 1920x1080x24 &
+export DISPLAY=:99
+```
+
+Or use the built-in MCP tools:
+- `install_xserver` - Install required packages
+- `start_xserver` - Start virtual display
+- `xserver_status` - Check status
 
 ## Configuration
 
@@ -172,6 +227,78 @@ Automate complex tasks with intelligent planning.
   "arguments": {
     "task": "Fill out the login form and submit"
   }
+}
+```
+
+### 🖥️ Install X Server
+
+Install required X server packages for display support.
+
+```json
+{
+  "tool": "install_xserver",
+  "arguments": {}
+}
+```
+
+### 🚀 Start X Server
+
+Start a virtual X server with custom resolution.
+
+```json
+{
+  "tool": "start_xserver",
+  "arguments": {
+    "display_num": 99,
+    "width": 1920,
+    "height": 1080
+  }
+}
+```
+
+### 🛑 Stop X Server
+
+Stop a running X server by display name.
+
+```json
+{
+  "tool": "stop_xserver",
+  "arguments": {
+    "display": ":99"
+  }
+}
+```
+
+### 🔗 Setup WSL X Forwarding
+
+Configure X11 forwarding for WSL2 to Windows host.
+
+```json
+{
+  "tool": "setup_wsl_xforwarding",
+  "arguments": {}
+}
+```
+
+### 📊 X Server Status
+
+Get status of X servers and display configuration.
+
+```json
+{
+  "tool": "xserver_status",
+  "arguments": {}
+}
+```
+
+### 🧪 Test Display
+
+Test the current display configuration.
+
+```json
+{
+  "tool": "test_display",
+  "arguments": {}
 }
 ```
 

@@ -14,7 +14,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
-from computer_use_core import ComputerUseCore, capture_screenshot
+from computer_use_mcp.computer_use_core import ComputerUseCore, capture_screenshot
 
 
 class TestComputerUseCoreActualFunctionality(unittest.TestCase):
@@ -141,12 +141,19 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
         mock_run.assert_called_with(['xdotool', 'key', 'ctrl+c'], check=True)
         self.assertTrue(result['success'])
     
+    @patch('computer_use_mcp.xserver_manager.XServerManager')
     @patch('subprocess.run')
-    def test_scroll_down_sends_button_5(self, mock_run):
+    def test_scroll_down_sends_button_5(self, mock_run, mock_xserver_class):
         """Test scroll down sends mouse button 5"""
+        # Mock XServerManager to prevent initialization calls
+        mock_xserver = Mock()
+        mock_xserver.get_best_display.return_value = {'available': True, 'display': ':0', 'method': 'test'}
+        mock_xserver_class.return_value = mock_xserver
+        
         core = ComputerUseCore(test_mode=False)
         core.display_available = True
         mock_run.return_value = Mock(returncode=0)
+        mock_run.reset_mock()  # Reset to clear initialization calls
         
         result = core.scroll('down', 3)
         
@@ -158,12 +165,19 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
             self.assertEqual(args[1], 'click')
             self.assertEqual(args[2], '5')
     
+    @patch('computer_use_mcp.xserver_manager.XServerManager')
     @patch('subprocess.run')
-    def test_scroll_up_sends_button_4(self, mock_run):
+    def test_scroll_up_sends_button_4(self, mock_run, mock_xserver_class):
         """Test scroll up sends mouse button 4"""
+        # Mock XServerManager to prevent initialization calls
+        mock_xserver = Mock()
+        mock_xserver.get_best_display.return_value = {'available': True, 'display': ':0', 'method': 'test'}
+        mock_xserver_class.return_value = mock_xserver
+        
         core = ComputerUseCore(test_mode=False)
         core.display_available = True
         mock_run.return_value = Mock(returncode=0)
+        mock_run.reset_mock()  # Reset to clear initialization calls
         
         result = core.scroll('up', 2)
         
@@ -172,12 +186,19 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
             args = call_obj[0][0]
             self.assertEqual(args[2], '4')  # button 4 for scroll up
     
+    @patch('computer_use_mcp.xserver_manager.XServerManager')
     @patch('subprocess.run')
-    def test_drag_operation_sequence(self, mock_run):
+    def test_drag_operation_sequence(self, mock_run, mock_xserver_class):
         """Test drag performs correct sequence of operations"""
+        # Mock XServerManager to prevent initialization calls
+        mock_xserver = Mock()
+        mock_xserver.get_best_display.return_value = {'available': True, 'display': ':0', 'method': 'test'}
+        mock_xserver_class.return_value = mock_xserver
+        
         core = ComputerUseCore(test_mode=False)
         core.display_available = True
         mock_run.return_value = Mock(returncode=0)
+        mock_run.reset_mock()  # Reset to clear initialization calls
         
         result = core.drag(10, 20, 100, 200)
         
@@ -197,12 +218,19 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
         
         self.assertTrue(result['success'])
     
+    @patch('computer_use_mcp.xserver_manager.XServerManager')
     @patch('subprocess.run')
-    def test_move_mouse_without_clicking(self, mock_run):
+    def test_move_mouse_without_clicking(self, mock_run, mock_xserver_class):
         """Test move_mouse just moves without clicking"""
+        # Mock XServerManager to prevent initialization calls
+        mock_xserver = Mock()
+        mock_xserver.get_best_display.return_value = {'available': True, 'display': ':0', 'method': 'test'}
+        mock_xserver_class.return_value = mock_xserver
+        
         core = ComputerUseCore(test_mode=False)
         core.display_available = True
         mock_run.return_value = Mock(returncode=0)
+        mock_run.reset_mock()  # Reset to clear initialization calls
         
         result = core.move_mouse(500, 300)
         
@@ -261,10 +289,16 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
         # Should still return success=True but no actual action
         self.assertTrue(result['success'])
     
+    @patch('computer_use_mcp.xserver_manager.XServerManager')
     @patch('os.environ.get')
     @patch('subprocess.run')
-    def test_wsl2_display_setup(self, mock_run, mock_env):
+    def test_wsl2_display_setup(self, mock_run, mock_env, mock_xserver_class):
         """Test WSL2 display setup for Windows"""
+        # Mock XServerManager to prevent initialization calls
+        mock_xserver = Mock()
+        mock_xserver.get_best_display.return_value = {'available': True, 'display': ':0', 'method': 'wsl_xforwarding'}
+        mock_xserver_class.return_value = mock_xserver
+        
         # Mock environment to look like WSL with DISPLAY set
         mock_env.side_effect = lambda x, default='': {
             'WSL_DISTRO_NAME': 'Ubuntu',

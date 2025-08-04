@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 
-from mcp_server import ComputerUseServer
+from computer_use_mcp.mcp_server import ComputerUseServer
 
 class TestMCPProtocol(unittest.TestCase):
     """Test MCP protocol compliance"""
@@ -55,7 +55,7 @@ class TestMCPProtocol(unittest.TestCase):
         self.assertIn("tools", response["result"])
         
         tools = response["result"]["tools"]
-        self.assertEqual(len(tools), 8)  # Should have 8 tools
+        self.assertEqual(len(tools), 14)  # Should have 14 tools (8 original + 6 X server tools)
         
         # Check each tool has required fields
         for tool in tools:
