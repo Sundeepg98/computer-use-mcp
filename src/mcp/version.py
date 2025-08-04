@@ -2,7 +2,7 @@
 
 __version__ = "1.0.0"
 __version_info__ = (1, 0, 0)
-__author__ = "Computer Use MCP Contributors"
-__author_email__ = ""
+__author__ = "sundeepg98"
+__author_email__ = "sundeepg8@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright 2025 Computer Use MCP Contributors"
+__copyright__ = "Copyright 2025 sundeepg98"
