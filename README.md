@@ -30,31 +30,33 @@ A powerful MCP (Model Context Protocol) server that provides computer use tools 
 
 ## Installation
 
-### Via npm (recommended)
-```bash
-npm install -g computer-use-mcp
-```
+### From Source (Current Method)
 
-### Via pip
-```bash
-pip install computer-use-mcp
-```
+This is a custom MCP server that needs to be installed from source:
 
-### Via Docker
 ```bash
-docker pull computer-use-mcp
-docker run -it --rm \
-  -e DISPLAY=$DISPLAY \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  computer-use-mcp
-```
-
-### From Source
-```bash
-git clone https://github.com/sundeepg98/computer-use-mcp.git
+# Clone the repository
+git clone https://github.com/Sundeepg98/computer-use-mcp.git
 cd computer-use-mcp
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Test the server (optional)
 python3 start_mcp_server.py
+
+# Add to Claude Code
+claude mcp add -s user computer-use -- python3 $(pwd)/start_mcp_server.py
+```
+
+### Package Manager Installation (Future)
+
+We plan to publish this as an npm and pip package in the future:
+
+```bash
+# Coming soon:
+# npm install -g computer-use-mcp
+# pip install computer-use-mcp
 ```
 
 ## X Server Setup
@@ -113,19 +115,49 @@ Or use the built-in MCP tools:
 
 ### For Claude Code
 
-Add to your `.mcp.json`:
+#### Using claude mcp add (Recommended)
+
+```bash
+# Clone the repository first
+git clone https://github.com/Sundeepg98/computer-use-mcp.git
+cd computer-use-mcp
+
+# Add to Claude Code using official command
+claude mcp add -s user computer-use -- python3 $(pwd)/start_mcp_server.py
+```
+
+#### Manual Configuration (Alternative)
+
+If you prefer manual configuration, add to your Claude Code configuration:
 
 ```json
 {
   "mcpServers": {
     "computer-use": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "computer-use-mcp"],
+      "command": "python3",
+      "args": ["/path/to/computer-use-mcp/start_mcp_server.py"],
       "env": {}
     }
   }
 }
+```
+
+**Note**: Replace `/path/to/computer-use-mcp/` with the actual path where you cloned the repository.
+
+#### Verify Installation
+
+After adding the MCP server, verify it's working:
+
+```bash
+# Check MCP server status
+claude mcp list
+
+# You should see:
+# computer-use: python3 /path/to/start_mcp_server.py - ✓ Connected
+
+# Get detailed server info
+claude mcp get computer-use
 ```
 
 ### For Standalone Usage
@@ -346,9 +378,11 @@ main()
 ### CLI Usage
 
 ```bash
-computer-use-mcp --help
-computer-use-mcp --list-tools
-computer-use-mcp --tool screenshot --analyze "Find buttons"
+# Run the MCP server directly
+python3 start_mcp_server.py
+
+# Or test tools via JSON-RPC (for debugging)
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | python3 start_mcp_server.py
 ```
 
 ## Testing
