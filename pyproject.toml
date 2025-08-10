@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "computer-use-mcp-lite"
+name = "computer-use-mcp"
 version = "2.1.0"
-description = "Streamlined MCP server for desktop automation - production-ready without bloat"
+description = "Production-ready MCP server for desktop automation with Claude"
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"

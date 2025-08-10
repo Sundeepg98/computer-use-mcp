@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Minimal MCP Server for Computer Use Lite
-Handles JSON-RPC protocol for MCP tools
+Production MCP Server for Computer Use
+Handles JSON-RPC protocol for MCP tools with optimized performance
 """
 
 __version__ = "2.1.0"
