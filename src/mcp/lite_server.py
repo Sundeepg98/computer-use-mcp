@@ -200,6 +200,9 @@ class MCPServer:
                             f.write(screenshot_data)
                         result['saved_to'] = save_path
                 
+                # Remove binary data from result before JSON serialization
+                result.pop('data', None)
+                
                 return self.success_response(request_id, result)
                 
             elif tool_name == "click":
