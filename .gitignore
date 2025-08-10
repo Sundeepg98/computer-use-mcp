@@ -11,11 +11,11 @@ ENV/
 build/
 develop-eggs/
 # dist/  # Commented out to allow package distribution
-# Keep old packages ignored
+# Keep old v1.0.0 packages ignored
 dist/computer_use_mcp-1.0.0*
-# Allow lite packages
-!dist/computer_use_mcp_lite-*.whl
-!dist/computer_use_mcp_lite-*.tar.gz
+# Allow v2+ packages
+!dist/computer_use_mcp-2.*.whl
+!dist/computer_use_mcp-2.*.tar.gz
 downloads/
 eggs/
 .eggs/
