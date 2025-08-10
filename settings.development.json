@@ -1,0 +1,106 @@
+{
+  "name": "computer-use-mcp-development",
+  "version": "1.0.0",
+  "environment": "development",
+  "server": {
+    "host": "localhost",
+    "port": 3000,
+    "protocol": "http",
+    "timeout": 60000,
+    "maxRetries": 5,
+    "keepAlive": true,
+    "keepAliveTimeout": 30000
+  },
+  "security": {
+    "enableAuth": false,
+    "enableEncryption": true,
+    "enableRateLimiting": false,
+    "corsOrigins": ["*"],
+    "allowedIPs": [],
+    "sessionTimeout": 86400000,
+    "tokenExpiry": 3600000
+  },
+  "features": {
+    "selfHealing": true,
+    "autoResolver": true,
+    "intelligentRetry": true,
+    "advancedCaching": true,
+    "debugMode": true,
+    "mockMode": true,
+    "experimentalFeatures": true
+  },
+  "display": {
+    "defaultDisplay": ":0",
+    "screenshotMethod": "auto",
+    "inputMethod": "auto",
+    "maxScreenshotSize": 20971520,
+    "compressionEnabled": false,
+    "compressionQuality": 100,
+    "enableVirtualDisplay": false
+  },
+  "performance": {
+    "cacheEnabled": true,
+    "cacheTTL": 300,
+    "maxConcurrentOperations": 10,
+    "operationTimeout": 30000,
+    "batchingEnabled": true,
+    "batchSize": 50
+  },
+  "logging": {
+    "level": "debug",
+    "format": "pretty",
+    "outputs": ["console", "file"],
+    "filePath": "./logs/dev.log",
+    "maxFileSize": "50MB",
+    "maxFiles": 10,
+    "includeTimestamp": true,
+    "includeMetadata": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsPort": 9090,
+    "healthCheckInterval": 10000,
+    "collectSystemMetrics": true,
+    "collectCustomMetrics": true,
+    "prometheusEnabled": true,
+    "tracingEnabled": true
+  },
+  "database": {
+    "connectionPool": {
+      "min": 2,
+      "max": 10,
+      "idleTimeout": 30000
+    },
+    "migrations": {
+      "autoRun": true,
+      "directory": "./migrations"
+    }
+  },
+  "redis": {
+    "connectionPool": {
+      "min": 1,
+      "max": 5
+    },
+    "keyPrefix": "dev:mcp:",
+    "enablePubSub": true
+  },
+  "testing": {
+    "enableMocks": true,
+    "testTimeout": 10000,
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  },
+  "development": {
+    "hotReload": true,
+    "sourceMaps": true,
+    "verboseErrors": true,
+    "stackTraceLimit": 50,
+    "enableDevTools": true
+  }
+}

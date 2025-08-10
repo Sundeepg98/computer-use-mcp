@@ -1,15 +1,24 @@
 """Helper utilities for computer-use-mcp"""
 
-import base64
-import io
-import json
-import os
-import subprocess
-import time
+import tempfile
+import platform
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Tuple
+import base64
+import io
+import json
 import logging
+import os
+import subprocess
+import time
+
+from ..platform_detector import PlatformDetector
+from ..constants import JSONRPC_VERSION, SECURE_DIR_PERMISSIONS, SECURE_FILE_PERMISSIONS, SUBPROCESS_TIMEOUT_SHORT
+from fix_json_serialization import SafeJSONEncoder
+
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,10 +26,10 @@ logger = logging.getLogger(__name__)
 def encode_image(image_path: str) -> Optional[str]:
     """
     Encode image file to base64
-    
+
     Args:
         image_path: Path to image file
-    
+
     Returns:
         Base64 encoded string or None if error
     """
@@ -35,23 +44,26 @@ def encode_image(image_path: str) -> Optional[str]:
 def decode_image(base64_string: str, output_path: Optional[str] = None) -> Optional[str]:
     """
     Decode base64 string to image file
-    
+
     Args:
         base64_string: Base64 encoded image
         output_path: Optional path to save decoded image
-    
+
     Returns:
         Path to saved image or None if error
     """
     try:
         image_data = base64.b64decode(base64_string)
-        
+
         if output_path is None:
-            output_path = f"/tmp/decoded_image_{int(time.time())}.png"
-        
+            # Use secure temp directory
+            secure_dir = Path.home() / ".config" / "computer-use-mcp" / "temp"
+            secure_dir.mkdir(parents=True, exist_ok=True, mode=SECURE_DIR_PERMISSIONS)
+            output_path = secure_dir / f"decoded_image_{int(time.time())}.png"
+
         with open(output_path, 'wb') as f:
             f.write(image_data)
-        
+
         return output_path
     except Exception as e:
         logger.error(f"Failed to decode image: {e}")
@@ -61,7 +73,7 @@ def decode_image(base64_string: str, output_path: Optional[str] = None) -> Optio
 def get_display_info() -> Dict[str, Any]:
     """
     Get display information
-    
+
     Returns:
         Dictionary with display info
     """
@@ -71,7 +83,7 @@ def get_display_info() -> Dict[str, Any]:
         'depth': 24,
         'display': os.environ.get('DISPLAY', ':0'),
     }
-    
+
     # Try to get actual display info on Linux
     if os.name == 'posix':
         try:
@@ -79,7 +91,7 @@ def get_display_info() -> Dict[str, Any]:
                 ['xdpyinfo'],
                 capture_output=True,
                 text=True,
-                timeout=2
+                timeout=SUBPROCESS_TIMEOUT_SHORT
             )
             if result.returncode == 0:
                 # Parse xdpyinfo output
@@ -96,18 +108,18 @@ def get_display_info() -> Dict[str, Any]:
                         break
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass
-    
+
     return info
 
 
 def safe_execute(command: list, timeout: int = 5) -> Tuple[bool, str, str]:
     """
     Safely execute a system command
-    
+
     Args:
         command: Command and arguments as list
         timeout: Timeout in seconds
-    
+
     Returns:
         Tuple of (success, stdout, stderr)
     """
@@ -126,19 +138,20 @@ def safe_execute(command: list, timeout: int = 5) -> Tuple[bool, str, str]:
         return False, "", str(e)
 
 
-def retry_on_failure(max_attempts: int = 3, delay: float = 1.0):
+def retry_on_failure(max_attempts: int = 3, delay: float = 1.0) -> Callable[[Callable], Callable]:
     """
     Decorator to retry function on failure
-    
+
     Args:
         max_attempts: Maximum number of attempts
         delay: Delay between attempts in seconds
     """
-    def decorator(func: Callable) -> Callable:
+
+def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             last_exception = None
-            
+
             for attempt in range(max_attempts):
                 try:
                     return func(*args, **kwargs)
@@ -152,48 +165,63 @@ def retry_on_failure(max_attempts: int = 3, delay: float = 1.0):
                         time.sleep(delay)
                     else:
                         logger.error(f"All {max_attempts} attempts failed")
-            
+
             if last_exception:
                 raise last_exception
-        
+
         return wrapper
     return decorator
 
 
-def load_state(state_file: str = "/tmp/computer-use-mcp-state.json") -> Dict[str, Any]:
+def load_state(state_file: str = None) -> Dict[str, Any]:
     """
     Load persistent state
-    
+
     Args:
         state_file: Path to state file
-    
+
     Returns:
         State dictionary
     """
     try:
+        if state_file is None:
+            # Use secure path instead of /tmp
+            secure_dir = Path.home() / ".config" / "computer-use-mcp"
+            secure_dir.mkdir(parents=True, exist_ok=True, mode=SECURE_DIR_PERMISSIONS)
+            state_file = secure_dir / "state.json"
+
         if Path(state_file).exists():
             with open(state_file, 'r') as f:
                 return json.load(f)
     except Exception as e:
         logger.error(f"Failed to load state: {e}")
-    
+
     return {}
 
 
-def save_state(state: Dict[str, Any], state_file: str = "/tmp/computer-use-mcp-state.json") -> bool:
+def save_state(state: Dict[str, Any], state_file: str = None) -> bool:
     """
     Save persistent state
-    
+
     Args:
         state: State dictionary to save
         state_file: Path to state file
-    
+
     Returns:
         True if successful
     """
     try:
+        if state_file is None:
+            # Use secure path instead of /tmp
+            secure_dir = Path.home() / ".config" / "computer-use-mcp"
+            secure_dir.mkdir(parents=True, exist_ok=True, mode=SECURE_DIR_PERMISSIONS)
+            state_file = secure_dir / "state.json"
+
         with open(state_file, 'w') as f:
             json.dump(state, f, indent=2)
+
+        # Set secure file permissions
+        Path(state_file).chmod(SECURE_FILE_PERMISSIONS)
         return True
     except Exception as e:
         logger.error(f"Failed to save state: {e}")
@@ -203,22 +231,22 @@ def save_state(state: Dict[str, Any], state_file: str = "/tmp/computer-use-mcp-s
 def format_mcp_response(result: Any, error: Optional[str] = None, request_id: Optional[int] = None) -> Dict[str, Any]:
     """
     Format MCP protocol response
-    
+
     Args:
         result: Result data
         error: Error message if any
         request_id: Request ID
-    
+
     Returns:
         Formatted MCP response
     """
     response = {
-        "jsonrpc": "2.0",
+        "jsonrpc": JSONRPC_VERSION,
     }
-    
+
     if request_id is not None:
         response["id"] = request_id
-    
+
     if error:
         response["error"] = {
             "code": -32603,  # Internal error
@@ -226,24 +254,31 @@ def format_mcp_response(result: Any, error: Optional[str] = None, request_id: Op
         }
     else:
         response["result"] = result
-    
+
     return response
 
 
 def get_platform_info() -> Dict[str, str]:
     """
     Get platform information
-    
+
     Returns:
         Platform info dictionary
     """
-    import platform
-    
+
+    # Get unified platform info
+    detector = PlatformDetector()
+    unified_info = detector.detect()
+
+    # Combine with additional platform details
     return {
-        'system': platform.system(),
+        'system': unified_info['system'],
         'release': platform.release(),
-        'version': platform.version(),
-        'machine': platform.machine(),
+        'version': unified_info['version'],
+        'machine': unified_info['machine'],
         'processor': platform.processor(),
         'python_version': platform.python_version(),
+        'is_wsl': unified_info['is_wsl'],
+        'is_docker': unified_info['is_docker'],
+        'has_gui': unified_info['has_gui']
     }

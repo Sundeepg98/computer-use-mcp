@@ -1,0 +1,201 @@
+{
+  "name": "computer-use-mcp-production",
+  "version": "1.0.0",
+  "environment": "production",
+  "server": {
+    "host": "api.example.com",
+    "port": 443,
+    "protocol": "https",
+    "timeout": 20000,
+    "maxRetries": 3,
+    "keepAlive": true,
+    "keepAliveTimeout": 15000,
+    "cluster": {
+      "enabled": true,
+      "workers": "auto"
+    }
+  },
+  "security": {
+    "enableAuth": true,
+    "enableEncryption": true,
+    "enableRateLimiting": true,
+    "corsOrigins": [
+      "https://app.example.com",
+      "https://www.example.com"
+    ],
+    "allowedIPs": [],
+    "sessionTimeout": 1800000,
+    "tokenExpiry": 900000,
+    "securityHeaders": {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+      "Content-Security-Policy": "default-src 'self'",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    },
+    "tls": {
+      "minVersion": "TLSv1.2",
+      "ciphers": "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+    }
+  },
+  "features": {
+    "selfHealing": true,
+    "autoResolver": true,
+    "intelligentRetry": true,
+    "advancedCaching": true,
+    "debugMode": false,
+    "mockMode": false,
+    "experimentalFeatures": false
+  },
+  "display": {
+    "defaultDisplay": ":99",
+    "screenshotMethod": "x11",
+    "inputMethod": "x11",
+    "maxScreenshotSize": 5242880,
+    "compressionEnabled": true,
+    "compressionQuality": 85,
+    "enableVirtualDisplay": true
+  },
+  "performance": {
+    "cacheEnabled": true,
+    "cacheTTL": 3600,
+    "maxConcurrentOperations": 50,
+    "operationTimeout": 15000,
+    "batchingEnabled": true,
+    "batchSize": 200,
+    "connectionPoolSize": 100,
+    "circuitBreaker": {
+      "enabled": true,
+      "threshold": 50,
+      "timeout": 30000,
+      "resetTimeout": 60000
+    }
+  },
+  "logging": {
+    "level": "warn",
+    "format": "json",
+    "outputs": ["file", "syslog", "cloudwatch"],
+    "filePath": "/var/log/computer-use-mcp/production.log",
+    "maxFileSize": "1GB",
+    "maxFiles": 30,
+    "includeTimestamp": true,
+    "includeMetadata": false,
+    "syslog": {
+      "host": "syslog.example.com",
+      "port": 514,
+      "protocol": "tcp"
+    },
+    "cloudwatch": {
+      "logGroup": "/aws/ecs/computer-use-mcp",
+      "logStream": "production"
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsPort": 9090,
+    "healthCheckInterval": 60000,
+    "collectSystemMetrics": true,
+    "collectCustomMetrics": true,
+    "prometheusEnabled": true,
+    "tracingEnabled": true,
+    "openTelemetry": {
+      "endpoint": "https://otel.example.com",
+      "serviceName": "computer-use-mcp-production",
+      "samplingRate": 0.1
+    },
+    "datadog": {
+      "enabled": true,
+      "apiKey": "${DD_API_KEY}",
+      "site": "datadoghq.com"
+    }
+  },
+  "database": {
+    "connectionPool": {
+      "min": 10,
+      "max": 50,
+      "idleTimeout": 300000
+    },
+    "migrations": {
+      "autoRun": false,
+      "directory": "./migrations"
+    },
+    "ssl": {
+      "enabled": true,
+      "rejectUnauthorized": true,
+      "ca": "/etc/ssl/certs/rds-ca-2019-root.pem"
+    },
+    "readReplicas": {
+      "enabled": true,
+      "hosts": [
+        "read1.db.example.com",
+        "read2.db.example.com"
+      ]
+    }
+  },
+  "redis": {
+    "connectionPool": {
+      "min": 5,
+      "max": 20
+    },
+    "keyPrefix": "prod:mcp:",
+    "enablePubSub": true,
+    "cluster": {
+      "enabled": true,
+      "nodes": [
+        "redis1.example.com:6379",
+        "redis2.example.com:6379",
+        "redis3.example.com:6379"
+      ]
+    },
+    "sentinel": {
+      "enabled": true,
+      "hosts": [
+        "sentinel1.example.com:26379",
+        "sentinel2.example.com:26379",
+        "sentinel3.example.com:26379"
+      ],
+      "masterName": "mcp-master"
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "schedule": "0 2 * * *",
+    "retentionDays": 30,
+    "s3": {
+      "bucket": "prod-backups",
+      "prefix": "computer-use-mcp/",
+      "storageClass": "GLACIER"
+    },
+    "snapshot": {
+      "enabled": true,
+      "frequency": "daily"
+    }
+  },
+  "alerts": {
+    "enabled": true,
+    "channels": ["pagerduty", "slack", "email"],
+    "thresholds": {
+      "errorRate": 0.01,
+      "responseTime": 1000,
+      "cpuUsage": 70,
+      "memoryUsage": 75,
+      "diskUsage": 80
+    },
+    "pagerduty": {
+      "serviceKey": "${PAGERDUTY_SERVICE_KEY}",
+      "severity": "critical"
+    }
+  },
+  "compliance": {
+    "gdpr": {
+      "enabled": true,
+      "dataRetentionDays": 365,
+      "anonymizeAfterDays": 730
+    },
+    "audit": {
+      "enabled": true,
+      "logRetentionDays": 2555
+    }
+  }
+}

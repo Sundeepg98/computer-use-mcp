@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Computer Use MCP Server - Command Line Wrapper
-Provides computer control tools via MCP protocol with ultrathink enhancement
+Provides computer control tools via MCP protocol
 """
 
 import sys
@@ -135,7 +135,7 @@ For Claude Code integration, add to .mcp.json:
         tools = [
             {
                 "name": "screenshot",
-                "description": "Capture and analyze screenshot with ultrathink",
+                "description": "Capture and analyze screenshot",
                 "parameters": ["analyze (optional)"]
             },
             {
@@ -170,7 +170,7 @@ For Claude Code integration, add to .mcp.json:
             },
             {
                 "name": "automate",
-                "description": "Automate a complex task with ultrathink planning",
+                "description": "Automate a complex task",
                 "parameters": ["task"]
             }
         ]
@@ -187,10 +187,10 @@ For Claude Code integration, add to .mcp.json:
     if args.tool:
         logger.info(f"Executing tool: {args.tool}")
         
-        # Import computer use core
-        from computer_use_core import ComputerUseCore
+        # Import computer use
+        from computer_use import ComputerUse
         
-        core = ComputerUseCore(test_mode=args.test)
+        core = ComputerUse()
         
         try:
             if args.tool == 'screenshot':

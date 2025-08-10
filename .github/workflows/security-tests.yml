@@ -1,0 +1,130 @@
+name: Security Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Daily security scan
+
+jobs:
+  security-validation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+    
+    - name: Run security pattern validation
+      run: |
+        python verify_all_security.py
+        python test_security_direct.py
+    
+    - name: Run safety checker tests
+      run: |
+        python -m pytest tests/test_safety_security.py -v
+    
+    - name: Check for hardcoded secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: ${{ github.event.pull_request.base.sha || github.sha }}
+        head: ${{ github.event.pull_request.head.sha || github.sha }}
+    
+    - name: Run thread safety tests
+      run: |
+        python thread_contention_test.py
+    
+    - name: Performance regression check
+      run: |
+        python performance_benchmark.py
+        # Check if performance is within acceptable limits
+        python -c "
+import json
+with open('performance_results.json') as f:
+    results = json.load(f)
+avg_text = sum(v['mean'] for k,v in results.items() if 'text_validation' in k) / 8
+if avg_text > 0.5:  # 0.5ms threshold
+    print(f'Performance regression detected: {avg_text:.3f}ms > 0.5ms')
+    exit(1)
+print(f'Performance OK: {avg_text:.3f}ms')
+"
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-test-results-${{ matrix.python-version }}
+        path: |
+          performance_results.json
+          baseline_results.json
+
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install linters
+      run: |
+        pip install black ruff mypy
+    
+    - name: Run black
+      run: black --check src/ tests/
+    
+    - name: Run ruff
+      run: ruff check src/ tests/
+    
+    - name: Run mypy
+      run: mypy src/ --ignore-missing-imports
+
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run Semgrep
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/python
+          p/owasp-top-ten
+    
+    - name: SAST Scan
+      uses: AppThreat/sast-scan-action@master
+      with:
+        type: "python"
+    
+    - name: Dependency check
+      run: |
+        pip install safety
+        safety check --json

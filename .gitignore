@@ -1,9 +1,13 @@
 # Python
+*.pyc
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
+venv/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -16,176 +20,36 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Virtual Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# PyCharm
-.idea/
-
-# VSCode
-.vscode/
-*.code-workspace
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# pipenv
-Pipfile.lock
-
-# poetry
-poetry.lock
-
-# Coverage
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# Unit test / coverage reports
-*.log
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# Node.js (for npm package)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-*.tsbuildinfo
-.npm
-.eslintcache
-.node_repl_history
-*.tgz
-.yarn-integrity
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# System files
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*~
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Docker
-.dockerignore
-
-# MCP specific
-.mcp-state/
-.mcp-cache/
-mcp-debug/
-
-# Screenshots and temporary files
-/tmp/
-*.tmp
-*.temp
-screenshot*.png
-*.xwd
-
-# Test outputs
-test-results/
-test-output/
-junit/
-
-# IDE
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# Security - Never commit these
-*.key
-*.pem
-*.cert
-*.crt
-*.p12
-*.pfx
-secrets/
-credentials/
-
-# Application specific
-/data/
-/output/
-/cache/
-.hook-state/
-.session-data/
 
 # Backup files
-*.bak
 *.backup
-*_backup
+*.bak
 *.old
+*~
+.*.swp
 
-# Archives
-*.zip
-*.tar.gz
-*.rar
-*.7z
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
 
-# Local configuration
-config.local.json
-settings.local.json
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage.*
+coverage.xml
+*.cover
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

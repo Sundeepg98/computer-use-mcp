@@ -1,0 +1,80 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+*.egg
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+coverage.xml
+htmlcov
+*.cover
+
+# Virtual environments
+venv
+env
+ENV
+.venv
+.env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+build
+dist
+*.whl
+
+# Documentation build
+docs/_build
+docs/.doctrees
+
+# Tests (optional - include if you want to run tests in container)
+# tests/
+# test_*.py
+
+# Development files
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# CI/CD
+.github
+.travis.yml
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Project specific
+validate_package.py
+Makefile
+CONTRIBUTING.md
+.pre-commit-config.yaml
+requirements-dev.txt
+
+# Temporary files
+tmp
+temp
+*.tmp
+*.bak
+*.backup
+*.old
+
+# Node modules (if any)
+node_modules
+npm-debug.log
+yarn-error.log

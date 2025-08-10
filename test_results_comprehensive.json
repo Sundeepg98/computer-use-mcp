@@ -1,0 +1,189 @@
+{
+  "timestamp": "2025-08-06T06:53:39.972135",
+  "total_files": 36,
+  "passed": 0,
+  "failed": 36,
+  "errors": 0,
+  "test_results": {
+    "tests/test_auto_resolver.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_cli.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_computer_use_core.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_docker.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_e2e_functionality.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_e2e_improvements.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_e2e_workflows.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_error_messages.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_examples.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_exception_handling_fixes.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_mcp_complete_structure.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_mcp_integration.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_mcp_protocol.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_mocks.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_package_tdd.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_platform_aware_helper.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_platform_detection.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_proper_example.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_protocol_handler.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_pure_unit_example.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_refactored_example.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_refactored_integration.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_safety_fixed.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_safety_security.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_safety_security_fixed.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_screenshot_system.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_screenshot_windows.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_stress_reliability.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_tool_manager.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_utils.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_validation_handler.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_vcxsrv.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_windows_input_tools.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_windows_server.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_xserver_integration.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    },
+    "tests/test_xserver_manager.py": {
+      "status": "\u274c FAILED",
+      "return_code": 4,
+      "output": "ImportError while loading conftest '/home/sunkar/computer-use-mcp/tests/conftest.py'.\ntests/conftest.py:10: in <module>\n    from mcp import create_computer_use_for_testing\nsrc/mcp/__init__.py:9: in <module>\n    from .core.computer_use import ComputerUse\nsrc/mcp/core/computer_use.py:21: in <module>\n    from .safety_checks import SafetyChecker\nsrc/mcp/core/safety_checks.py:11: in <module>\n    from ..utils import validators\nE     File \"/home/sunkar/computer-use-mcp/src/mcp/utils/validators.py\", lin"
+    }
+  }
+}

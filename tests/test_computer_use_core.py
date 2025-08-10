@@ -1,25 +1,25 @@
-#!/usr/bin/env python3
 """
-Platform-aware functional tests for ComputerUseCore
+Platform-aware functional tests for ComputerUse
 Tests work correctly on both Linux and Windows/WSL2
 """
 
-import unittest
+from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock, call
+import os
 import subprocess
 import sys
-import os
-from pathlib import Path
+import unittest
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+from mcp.platforms.platform_utils import is_wsl2
+from .test_mocks import create_test_computer_use, MockScreenshotProvider, MockInputProvider, capture_screenshot
 
-from mcp.test_mocks import create_test_computer_use, MockScreenshotProvider, MockInputProvider, capture_screenshot
-from mcp.platform_utils import is_wsl2
 from .test_platform_aware_helper import adapt_test_for_platform, create_platform_aware_subprocess_mock
 
+#!/usr/bin/env python3
 
-class TestComputerUseCoreActualFunctionality(unittest.TestCase):
+# Add src to path
+
+class TestComputerUseActualFunctionality(unittest.TestCase):
     """Test ACTUAL functionality of computer use core"""
     
     def setUp(self):
@@ -264,8 +264,7 @@ class TestComputerUseCoreActualFunctionality(unittest.TestCase):
         self.assertTrue(result3['success'])
         self.assertTrue(result4['success'])
 
-
-class TestComputerUseCoreEdgeCases(unittest.TestCase):
+class TestComputerUseEdgeCases(unittest.TestCase):
     """Test edge cases and error handling"""
     
     def setUp(self):
@@ -299,7 +298,6 @@ class TestComputerUseCoreEdgeCases(unittest.TestCase):
         result = self.core.scroll('sideways', 5)
         # Check that it's handled appropriately
         self.assertIn('success', result)
-
 
 if __name__ == '__main__':
     unittest.main()

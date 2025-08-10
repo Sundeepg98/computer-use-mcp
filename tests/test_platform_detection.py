@@ -1,17 +1,18 @@
-#!/usr/bin/env python3
 """
 TDD Tests for platform detection functionality
 Written BEFORE implementation to drive development
 """
 
-import unittest
+from unittest.mock import patch, MagicMock
 import os
 import sys
-from unittest.mock import patch, MagicMock
+import unittest
+
+from mcp.platforms.platform_utils import PlatformDetector
+
+#!/usr/bin/env python3
 
 # Add src to path (will exist after implementation)
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-
 
 class TestPlatformDetection(unittest.TestCase):
     """Test platform detection for proper screenshot method selection"""
@@ -20,7 +21,6 @@ class TestPlatformDetection(unittest.TestCase):
         """Setup test environment"""
         # Import will fail until we implement it - that's TDD!
         try:
-            from mcp.platform_utils import PlatformDetector
             self.detector = PlatformDetector()
         except ImportError:
             self.skipTest("PlatformDetector not implemented yet - TDD in progress")
@@ -56,7 +56,7 @@ class TestPlatformDetection(unittest.TestCase):
                     self.assertTrue(result['can_use_x11'])  # X11 available but won't capture Windows
                     self.assertTrue(result['wsl_version'], 2)
     
-    def test_detect_wsl1(self):
+def test_detect_wsl1(self):
         """Test detection of WSL1 environment"""
         with patch('platform.system', return_value='Linux'):
             with patch.dict(os.environ, {'WSL_DISTRO_NAME': 'Ubuntu'}, clear=True):
@@ -89,7 +89,7 @@ class TestPlatformDetection(unittest.TestCase):
                         self.assertFalse(result['can_use_dotnet'])
                         self.assertTrue(result['can_use_x11'])
     
-    def test_detect_macos(self):
+def test_detect_macos(self):
         """Test detection of macOS environment"""
         with patch('platform.system', return_value='Darwin'):
             result = self.detector.detect_platform()
@@ -162,7 +162,6 @@ class TestPlatformDetection(unittest.TestCase):
             
             method = self.detector.get_recommended_screenshot_method()
             self.assertEqual(method, 'x11')
-
 
 if __name__ == '__main__':
     unittest.main()

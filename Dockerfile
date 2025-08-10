@@ -13,7 +13,9 @@ WORKDIR /build
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+COPY requirements-health.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt && \
+    pip install --no-cache-dir --user -r requirements-health.txt
 
 # Production stage
 FROM python:3.11-slim

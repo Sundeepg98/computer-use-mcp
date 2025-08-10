@@ -1,0 +1,133 @@
+{
+  "name": "computer-use-mcp-staging",
+  "version": "1.0.0",
+  "environment": "staging",
+  "server": {
+    "host": "staging.example.com",
+    "port": 443,
+    "protocol": "https",
+    "timeout": 30000,
+    "maxRetries": 3,
+    "keepAlive": true,
+    "keepAliveTimeout": 20000
+  },
+  "security": {
+    "enableAuth": true,
+    "enableEncryption": true,
+    "enableRateLimiting": true,
+    "corsOrigins": [
+      "https://staging.example.com",
+      "https://staging-app.example.com"
+    ],
+    "allowedIPs": [],
+    "sessionTimeout": 3600000,
+    "tokenExpiry": 1800000,
+    "securityHeaders": {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+    }
+  },
+  "features": {
+    "selfHealing": true,
+    "autoResolver": true,
+    "intelligentRetry": true,
+    "advancedCaching": true,
+    "debugMode": false,
+    "mockMode": false,
+    "experimentalFeatures": true
+  },
+  "display": {
+    "defaultDisplay": ":1",
+    "screenshotMethod": "x11",
+    "inputMethod": "x11",
+    "maxScreenshotSize": 10485760,
+    "compressionEnabled": true,
+    "compressionQuality": 90,
+    "enableVirtualDisplay": true
+  },
+  "performance": {
+    "cacheEnabled": true,
+    "cacheTTL": 1800,
+    "maxConcurrentOperations": 20,
+    "operationTimeout": 20000,
+    "batchingEnabled": true,
+    "batchSize": 100,
+    "connectionPoolSize": 50
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": ["file", "syslog"],
+    "filePath": "/var/log/computer-use-mcp/staging.log",
+    "maxFileSize": "100MB",
+    "maxFiles": 7,
+    "includeTimestamp": true,
+    "includeMetadata": true,
+    "syslog": {
+      "host": "staging-syslog.example.com",
+      "port": 514,
+      "protocol": "tcp"
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsPort": 9090,
+    "healthCheckInterval": 30000,
+    "collectSystemMetrics": true,
+    "collectCustomMetrics": true,
+    "prometheusEnabled": true,
+    "tracingEnabled": true,
+    "openTelemetry": {
+      "endpoint": "https://staging-otel.example.com",
+      "serviceName": "computer-use-mcp-staging"
+    }
+  },
+  "database": {
+    "connectionPool": {
+      "min": 5,
+      "max": 20,
+      "idleTimeout": 60000
+    },
+    "migrations": {
+      "autoRun": false,
+      "directory": "./migrations"
+    },
+    "ssl": {
+      "enabled": true,
+      "rejectUnauthorized": true
+    }
+  },
+  "redis": {
+    "connectionPool": {
+      "min": 2,
+      "max": 10
+    },
+    "keyPrefix": "staging:mcp:",
+    "enablePubSub": true,
+    "sentinel": {
+      "enabled": false,
+      "hosts": []
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "schedule": "0 3 * * *",
+    "retentionDays": 14,
+    "s3": {
+      "bucket": "staging-backups",
+      "prefix": "computer-use-mcp/"
+    }
+  },
+  "alerts": {
+    "enabled": true,
+    "channels": ["email", "slack"],
+    "thresholds": {
+      "errorRate": 0.05,
+      "responseTime": 2000,
+      "cpuUsage": 80,
+      "memoryUsage": 85
+    }
+  }
+}

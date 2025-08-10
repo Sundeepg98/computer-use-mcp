@@ -1,21 +1,20 @@
-#!/usr/bin/env python3
 """
 Test MCP protocol implementation for computer-use-mcp
 """
 
-import sys
-import os
-import json
-import unittest
 from unittest.mock import Mock, patch, MagicMock
+import json
+import os
+import sys
+import unittest
 
-from mcp.test_mocks import create_test_computer_use
 from mcp import create_computer_use_for_testing
+from mcp.server.mcp_server import ComputerUseServer
+from .test_mocks import create_test_computer_use
+
+#!/usr/bin/env python3
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
-
-from mcp.mcp_server import ComputerUseServer
 
 class TestMCPProtocol(unittest.TestCase):
     """Test MCP protocol compliance"""

@@ -1,5 +1,6 @@
 """Mock data for testing"""
 
+
 # Mock MCP responses
 MOCK_INITIALIZE_RESPONSE = {
     "jsonrpc": "2.0",
