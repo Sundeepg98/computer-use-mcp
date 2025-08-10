@@ -28,8 +28,9 @@ except ImportError:
 # Configure logging to file to avoid stderr confusion in Claude
 # Claude treats ALL stderr output as errors, even INFO logs!
 log_file = os.environ.get('MCP_LOG_FILE', '/tmp/mcp_server.log')
+log_level = logging.DEBUG if os.environ.get('MCP_DEBUG') else logging.INFO
 logging.basicConfig(
-    level=logging.INFO,
+    level=log_level,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     filename=log_file,
     filemode='a'

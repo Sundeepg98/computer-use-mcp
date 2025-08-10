@@ -45,14 +45,26 @@ class ComputerUse:
     def take_screenshot(self) -> Dict[str, Any]:
         """Take a screenshot"""
         try:
-            if not self.display.is_display_available():
+            # Debug: Log display check
+            display_available = self.display.is_display_available()
+            logger.info(f"Display check: available={display_available}")
+            
+            if not display_available:
+                logger.warning("Display not available for screenshot")
                 return {
                     'success': False,
                     'error': 'No display available',
                     'platform': self.platform.get_platform()
                 }
             
+            logger.info("Attempting screenshot capture...")
             screenshot_data = self.screenshot.capture()
+            
+            # Debug: Check data
+            if screenshot_data:
+                logger.info(f"Screenshot captured: {len(screenshot_data)} bytes")
+            else:
+                logger.warning("Screenshot capture returned no data")
             
             return {
                 'success': True,
@@ -62,7 +74,7 @@ class ComputerUse:
             }
             
         except Exception as e:
-            logger.error(f"Screenshot failed: {e}")
+            logger.error(f"Screenshot failed: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),

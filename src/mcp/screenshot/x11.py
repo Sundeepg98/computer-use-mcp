@@ -27,13 +27,18 @@ class X11Screenshot(ScreenshotBase):
             self._capture_with_xwd,
         ]
 
+        logger.info(f"Starting X11 screenshot capture (DISPLAY={os.environ.get('DISPLAY', 'not set')})")
+        
         last_error = None
         for method in methods:
             try:
-                return method(**kwargs)
+                logger.info(f"Trying method: {method.__name__}")
+                result = method(**kwargs)
+                logger.info(f"Method {method.__name__} succeeded: {len(result)} bytes")
+                return result
             except Exception as e:
                 last_error = e
-                logger.debug(f"Method {method.__name__} failed: {e}")
+                logger.warning(f"Method {method.__name__} failed: {e}")
                 continue
 
         raise ScreenshotCaptureError(f"All X11 methods failed: {last_error}")
@@ -44,20 +49,38 @@ class X11Screenshot(ScreenshotBase):
             tmp_path = tmp.name
 
         try:
-            cmd = ['scrot', '--silent', tmp_path]
+            # Remove --silent to see any error messages
+            cmd = ['scrot', tmp_path]
 
             # Handle region capture
             region = kwargs.get('region')
             if region:
                 cmd.extend(['--select', f"{region['x']},{region['y']},{region['width']},{region['height']}"])
 
-            result = subprocess.run(cmd, capture_output=True, timeout=SUBPROCESS_TIMEOUT_NORMAL)
+            # Ensure DISPLAY is in environment
+            env = os.environ.copy()
+            logger.debug(f"Running command: {' '.join(cmd)} with DISPLAY={env.get('DISPLAY', 'not set')}")
+            result = subprocess.run(cmd, capture_output=True, timeout=SUBPROCESS_TIMEOUT_NORMAL, env=env)
+            
+            logger.debug(f"scrot returncode: {result.returncode}")
+            if result.stderr:
+                logger.debug(f"scrot stderr: {result.stderr.decode()}")
 
             if result.returncode != 0:
                 raise ScreenshotCaptureError(f"scrot failed: {result.stderr.decode()}")
 
+            # Add a small delay to ensure file is written
+            import time
+            time.sleep(0.1)
+            
+            # Check file size before reading
+            file_size = os.path.getsize(tmp_path)
+            logger.debug(f"Screenshot file size: {file_size} bytes at {tmp_path}")
+            
             with open(tmp_path, 'rb') as f:
-                return f.read()
+                data = f.read()
+                logger.debug(f"Read {len(data)} bytes from file")
+                return data
         finally:
             if os.path.exists(tmp_path):
                 os.unlink(tmp_path)
@@ -107,19 +130,30 @@ class X11Screenshot(ScreenshotBase):
 
     def is_available(self) -> bool:
         """Check if X11 screenshot is available"""
-        if not os.environ.get('DISPLAY'):
+        display = os.environ.get('DISPLAY')
+        logger.debug(f"Checking X11 availability: DISPLAY={display}")
+        
+        if not display:
+            logger.debug("X11 not available: No DISPLAY environment variable")
             return False
 
         # Check if at least one tool is available
         tools = ['scrot', 'import', 'xwd']
+        available_tools = []
         for tool in tools:
             try:
                 result = subprocess.run(['which', tool], capture_output=True)
                 if result.returncode == 0:
-                    return True
+                    available_tools.append(tool)
             except (subprocess.SubprocessError, OSError, FileNotFoundError):
                 continue
 
+        logger.debug(f"Available X11 tools: {available_tools}")
+        
+        if available_tools:
+            return True
+        
+        logger.debug("X11 not available: No screenshot tools found")
         return False
 
     def get_monitors(self) -> List[Dict[str, Any]]:

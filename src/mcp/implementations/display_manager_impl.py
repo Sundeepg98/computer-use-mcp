@@ -24,28 +24,37 @@ class DisplayManagerImpl:
         """Check if display is available"""
         # Windows and WSL2 always have display via PowerShell
         if is_windows() or is_wsl2():
+            logger.debug("Display available: Windows/WSL2 detected")
             return True
 
         # macOS always has display
         if self._platform_info['platform'] == 'macos':
+            logger.debug("Display available: macOS detected")
             return True
 
         # Linux - check for X11 or Wayland
         if self._platform_info['platform'] == 'linux':
             # Check DISPLAY environment variable
-            if os.environ.get('DISPLAY'):
+            display = os.environ.get('DISPLAY')
+            if display:
+                logger.debug(f"Display available: DISPLAY={display}")
                 return True
 
             # Check Wayland
-            if os.environ.get('WAYLAND_DISPLAY'):
+            wayland = os.environ.get('WAYLAND_DISPLAY')
+            if wayland:
+                logger.debug(f"Display available: WAYLAND_DISPLAY={wayland}")
                 return True
 
             # Check if we can use X11
-            return self._platform_info.get('can_use_x11', False)
+            can_use_x11 = self._platform_info.get('can_use_x11', False)
+            logger.debug(f"Linux display check: DISPLAY=None, WAYLAND=None, can_use_x11={can_use_x11}")
+            return can_use_x11
 
+        logger.debug(f"Display not available: Unknown platform {self._platform_info['platform']}")
         return False
 
-def get_best_display(self) -> Optional[str]:
+    def get_best_display(self) -> Optional[str]:
         """Get the best available display"""
         if is_windows():
             return 'windows_native'
@@ -64,7 +73,7 @@ def get_best_display(self) -> Optional[str]:
 
         return None
 
-def setup_display(self) -> bool:
+    def setup_display(self) -> bool:
         """Setup display if needed"""
         # Most platforms don't need setup
         if self.is_display_available():
