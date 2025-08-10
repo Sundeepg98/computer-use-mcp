@@ -16,13 +16,21 @@ from typing import Dict, Any, Optional
 from .core.factory import create_computer_use
 from .core.safety import get_safety_checker
 
-# Configure logging to stderr
+# Configure logging to file to avoid stderr confusion in Claude
+# Claude treats ALL stderr output as errors, even INFO logs!
+log_file = os.environ.get('MCP_LOG_FILE', '/tmp/mcp_server.log')
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    stream=sys.stderr
+    filename=log_file,
+    filemode='a'
 )
 logger = logging.getLogger(__name__)
+
+# Only send CRITICAL errors to stderr
+stderr_handler = logging.StreamHandler(sys.stderr)
+stderr_handler.setLevel(logging.CRITICAL)
+logging.getLogger().addHandler(stderr_handler)
 
 
 class MCPServer:
