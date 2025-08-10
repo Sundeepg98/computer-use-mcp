@@ -72,35 +72,35 @@ def get_platform_providers() -> Dict[str, Any]:
     
     # Platform-specific providers
     if platform_info['platform'] == 'windows':
-        from ..screenshot.windows import WindowsScreenshotProvider
-        from ..input.windows import WindowsInputProvider
+        from ..screenshot.windows import WindowsScreenshot
+        from ..input.windows import WindowsInput
         
         return {
-            'screenshot': WindowsScreenshotProvider(),
-            'input': WindowsInputProvider(),
+            'screenshot': WindowsScreenshot(),
+            'input': WindowsInput(),
             'platform': PlatformInfoImpl(),
             'display': DisplayManagerImpl()
         }
     
     elif platform_info['environment'] == 'wsl2':
         # WSL2 uses hybrid approach
-        from ..screenshot.x11 import X11ScreenshotProvider
-        from ..input.x11 import X11InputProvider
+        from ..screenshot.x11 import X11Screenshot
+        from ..input.x11 import X11Input
         
         return {
-            'screenshot': X11ScreenshotProvider(),
-            'input': X11InputProvider(),
+            'screenshot': X11Screenshot(),
+            'input': X11Input(),
             'platform': PlatformInfoImpl(),
             'display': DisplayManagerImpl()
         }
     
     elif platform_info['platform'] == 'linux':
-        from ..screenshot.x11 import X11ScreenshotProvider
-        from ..input.x11 import X11InputProvider
+        from ..screenshot.x11 import X11Screenshot
+        from ..input.x11 import X11Input
         
         return {
-            'screenshot': X11ScreenshotProvider(),
-            'input': X11InputProvider(),
+            'screenshot': X11Screenshot(),
+            'input': X11Input(),
             'platform': PlatformInfoImpl(),
             'display': DisplayManagerImpl()
         }

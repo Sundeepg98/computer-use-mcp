@@ -1,52 +1,45 @@
 """
-Input module for computer-use-mcp
-Provides cross-platform mouse and keyboard functionality
+Input module for computer-use-mcp lite
+Provides essential input functionality
 """
 
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 import logging
 
-from .windows import WSL2Input
+from .windows import WindowsInput, WSL2Input
 from .x11 import X11Input
-from .windows import WindowsInput
-from ..platforms.platform_utils import get_platform_info, get_recommended_input_method
-
+from ..platforms import detect_platform
 
 logger = logging.getLogger(__name__)
 
 
 class InputFactory:
     """Factory for creating appropriate input implementation"""
-
+    
     @staticmethod
-    def create() -> 'InputHandler':
+    def create() -> Any:
         """Create appropriate input handler for current platform"""
-        platform_info = get_platform_info()
-        method = get_recommended_input_method()
-
+        platform_info = detect_platform()
+        
         logger.info(f"Creating input handler for {platform_info['platform']} "
-                   f"({platform_info['environment']}), method: {method}")
-
-        if method == 'windows_native':
+                   f"({platform_info['environment']})")
+        
+        if platform_info['platform'] == 'windows':
             return WindowsInput()
-        elif method == 'wsl2_powershell':
-            return WSL2Input()
-        elif method == 'x11_xdotool':
-            try:
-                return X11Input()
-            except Exception as e:
-                logger.warning(f"X11Input not available: {e}")
-                # Fallback to WSL2 if available
-                if platform_info.get('can_use_powershell'):
-                    return WSL2Input()
-                raise
+        elif platform_info['environment'] == 'wsl2':
+            return X11Input()  # WSL2 uses X11
+        elif platform_info['platform'] == 'linux':
+            return X11Input()
         else:
-            raise RuntimeError(f"No input handler available for method: {method}")
+            # Fallback to mock
+            from ..core.test_mocks import MockInputProvider
+            logger.warning("No input provider available, using mock")
+            return MockInputProvider()
 
 
-def get_input_handler() -> 'InputHandler':
-    """Get input handler for current platform"""
-    return InputFactory.create()
+# Public API
+__all__ = ['InputFactory', 'WindowsInput', 'X11Input']
 
-
-__all__ = ['InputFactory', 'get_input_handler']
+# Aliases for compatibility
+WindowsInputProvider = WindowsInput
+X11InputProvider = X11Input
