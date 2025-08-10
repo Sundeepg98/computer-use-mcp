@@ -34,7 +34,7 @@ class MCPServer:
         
     def handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Handle incoming MCP request"""
-        request_id = request.get("id")
+        request_id = request.get("id", 0)  # Default to 0 if no id
         method = request.get("method")
         params = request.get("params", {})
         
@@ -283,16 +283,39 @@ class MCPServer:
                 # Parse JSON request
                 request = json.loads(line)
                 
-                # Handle request
-                response = self.handle_request(request)
+                # Get request ID - use 0 if not provided
+                request_id = request.get("id", 0)
                 
-                # Send response
-                if response:
-                    sys.stdout.write(json.dumps(response) + "\n")
+                try:
+                    # Handle request
+                    response = self.handle_request(request)
+                    
+                    # Send response
+                    if response:
+                        sys.stdout.write(json.dumps(response) + "\n")
+                        sys.stdout.flush()
+                        
+                except Exception as e:
+                    # Send error response for any exception during handling
+                    error_response = self.error_response(request_id, str(e))
+                    sys.stdout.write(json.dumps(error_response) + "\n")
                     sys.stdout.flush()
+                    logger.error(f"Error handling request: {e}")
                     
             except json.JSONDecodeError as e:
                 logger.error(f"Invalid JSON: {e}")
+                # Send JSON-RPC parse error
+                error_response = {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": -32700,
+                        "message": "Parse error",
+                        "data": str(e)
+                    }
+                }
+                sys.stdout.write(json.dumps(error_response) + "\n")
+                sys.stdout.flush()
             except KeyboardInterrupt:
                 logger.info("Server stopped by user")
                 break
