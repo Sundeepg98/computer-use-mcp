@@ -4,6 +4,8 @@ Minimal MCP Server for Computer Use Lite
 Handles JSON-RPC protocol for MCP tools
 """
 
+__version__ = "2.1.0"
+
 import json
 import sys
 import logging
