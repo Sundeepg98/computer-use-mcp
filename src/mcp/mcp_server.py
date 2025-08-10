@@ -13,8 +13,17 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from .core.factory import create_computer_use
-from .core.safety import get_safety_checker
+# Handle both module and direct execution
+try:
+    from .core.factory import create_computer_use
+    from .core.safety import get_safety_checker
+except ImportError:
+    # Running directly, not as module
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from mcp.core.factory import create_computer_use
+    from mcp.core.safety import get_safety_checker
 
 # Configure logging to file to avoid stderr confusion in Claude
 # Claude treats ALL stderr output as errors, even INFO logs!
