@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "computer-use-mcp-lite"
-version = "2.0.0"
+version = "2.1.0"
 description = "Streamlined MCP server for desktop automation - production-ready without bloat"
 readme = "README.md"
 requires-python = ">=3.8"

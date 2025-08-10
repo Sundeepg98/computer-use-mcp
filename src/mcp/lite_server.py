@@ -61,7 +61,7 @@ class MCPServer:
                 },
                 "serverInfo": {
                     "name": "computer-use-mcp-lite",
-                    "version": "2.0.0"
+                    "version": "2.1.0"
                 }
             }
         }
@@ -165,6 +165,22 @@ class MCPServer:
                         }
                     }
                 }
+            },
+            {
+                "name": "get_platform_info",
+                "description": "Get comprehensive platform information",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
+                "name": "check_display_available",
+                "description": "Check if display/GUI is available for automation",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
             }
         ]
         
@@ -240,6 +256,36 @@ class MCPServer:
             elif tool_name == "wait":
                 seconds = arguments.get("seconds", 1.0)
                 result = self.computer.wait(seconds)
+                return self.success_response(request_id, result)
+                
+            elif tool_name == "get_platform_info":
+                # Get platform information
+                capabilities = self.computer.platform.get_capabilities()
+                result = {
+                    "platform": {
+                        "platform": self.computer.platform.get_platform(),
+                        "environment": self.computer.platform.get_environment(),
+                        "can_use_powershell": capabilities.get('wsl2', False),
+                        "can_use_x11": capabilities.get('x11', False),
+                        "wsl_version": 2 if capabilities.get('wsl2', False) else None
+                    },
+                    "capabilities": {
+                        "screenshot_available": self.computer.display.is_display_available(),
+                        "input_available": True,
+                        "gui_available": self.computer.display.is_display_available()
+                    }
+                }
+                return self.success_response(request_id, result)
+                
+            elif tool_name == "check_display_available":
+                # Check display availability
+                is_available = self.computer.display.is_display_available()
+                result = {
+                    "display_available": is_available,
+                    "gui_available": is_available,
+                    "platform": self.computer.platform.get_platform(),
+                    "environment": self.computer.platform.get_environment()
+                }
                 return self.success_response(request_id, result)
                 
             else:
