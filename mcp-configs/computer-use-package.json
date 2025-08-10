@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "computer-use": {
+      "type": "stdio",
+      "command": "/home/sunkar/computer-use-mcp/.venv/bin/computer-use-mcp",
+      "env": {
+        "MCP_LOG_FILE": "/tmp/computer_use_mcp.log",
+        "MCP_DEBUG": "1"
+      }
+    }
+  }
+}

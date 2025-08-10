@@ -83,13 +83,13 @@ def get_platform_providers() -> Dict[str, Any]:
         }
     
     elif platform_info['environment'] == 'wsl2':
-        # WSL2 uses PowerShell for screenshots, X11 for input
+        # WSL2 uses PowerShell for screenshots and Windows input
         from ..screenshot.windows import WSL2Screenshot
-        from ..input.x11 import X11Input
+        from ..input.windows import WSL2Input
         
         return {
             'screenshot': WSL2Screenshot(),
-            'input': X11Input(),
+            'input': WSL2Input(),
             'platform': PlatformInfoImpl(),
             'display': DisplayManagerImpl()
         }
