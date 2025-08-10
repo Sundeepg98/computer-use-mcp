@@ -28,7 +28,15 @@ class SafetyChecker:
             'rm -rf /',
             'format c:',
             'del /f /s /q',
-            ':(){:|:&};:',  # Fork bomb
+            ':()',  # Fork bomb signature
+            ':(){',  # Fork bomb start
+            ':|:&',  # Fork bomb pattern
+            'del c:\\windows\\system32',
+            'drop table',
+            "' or '1'='1",
+            '<script>',
+            'aws_secret_access_key',
+            'export aws_',
         ]
         
         # Essential patterns only (50 proven threats)
@@ -41,6 +49,8 @@ class SafetyChecker:
                 re.compile(r'del\s+/f\s+/s\s+/q', re.IGNORECASE),
                 re.compile(r'dd\s+if=/dev/(zero|random)\s+of=/dev/', re.IGNORECASE),
                 re.compile(r'>\s*/dev/(sd|hd|nvme)', re.IGNORECASE),
+                re.compile(r'del\s+[cC]:\\\\[wW]indows', re.IGNORECASE),  # Windows system delete
+                re.compile(r'rd\s+/s\s+/q\s+[cC]:\\\\', re.IGNORECASE),  # Remove directory Windows
             ],
             
             # Credentials (Medium Priority)
@@ -50,6 +60,7 @@ class SafetyChecker:
                 re.compile(r'token[=:\s][\S]+', re.IGNORECASE),
                 re.compile(r'Bearer\s+[A-Za-z0-9\-._~+/]+', re.IGNORECASE),
                 re.compile(r'BEGIN\s+[A-Z]+\s+PRIVATE\s+KEY', re.IGNORECASE),
+                re.compile(r'export\s+\w*_(SECRET|KEY|TOKEN|PASSWORD)', re.IGNORECASE),
             ],
             
             # Network Operations (Medium Priority)
@@ -68,6 +79,10 @@ class SafetyChecker:
                 re.compile(r'\$\([^)]+\)'),  # Command substitution
                 re.compile(r'&&[\s]*(rm|del|format)', re.IGNORECASE),
                 re.compile(r'\|\s*(bash|sh|zsh)', re.IGNORECASE),
+                re.compile(r'(DROP|DELETE|TRUNCATE)\s+TABLE', re.IGNORECASE),  # SQL
+                re.compile(r"'\s*(OR|AND)\s+'?\d+'?\s*=\s*'?\d+'?", re.IGNORECASE),  # SQL injection
+                re.compile(r'<script[^>]*>', re.IGNORECASE),  # XSS
+                re.compile(r'javascript:', re.IGNORECASE),  # XSS
             ],
         }
         
